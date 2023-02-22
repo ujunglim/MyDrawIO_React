@@ -1,4 +1,5 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect } from "react";
+import DrawController from "./DrawController";
 
 // const manager = {
 //   lastDependency: null,
@@ -26,34 +27,15 @@ import { useRef, useEffect, useCallback } from "react";
 
 function Canvas() {
   const canvasRef = useRef(null);
-  const rect = { x: 0, y: 0, width: 50, height: 50 }; // initial position and size of rectangle
-  const contextRef = useRef();
-
-  const draw = () => {
-    const context = contextRef.current;
-    const canvas = canvasRef.current;
-    context.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
-
-    context.fillStyle = "red";
-    context.fillRect(rect.x, rect.y, rect.width, rect.height);
-  };
-
-  const update = useCallback((event) => {
-    rect.x = event.clientX - rect.width / 2; // set the x position of the rectangle
-    rect.y = event.clientY - rect.height / 2; // set the y position of the rectangle
-    draw(); // redraw the canvas with the updated position
-  }, []);
+  const drawControllerRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
+    drawControllerRef.current = new DrawController(canvas, context);
 
-    contextRef.current = context;
-    context.fillStyle = "beige";
-    context.fillRect(0, 0, canvas.width, canvas.height);
-
-    canvas.addEventListener("mousemove", update);
-    return () => canvas.removeEventListener("mousemove", update);
+    drawControllerRef.current.addListener();
+    return () => drawControllerRef.current.removeListener();
   }, []); // [] create일때만 실행
 
   return (
