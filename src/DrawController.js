@@ -1,9 +1,28 @@
-class Rect {
-  constructor(x, y, w, h) {
+class Vec2 {
+  constructor(x, y) {
     this.x = x;
     this.y = y;
+  }
+  plus(v) {
+    return new Vec2(this.x + v.x, this.y + v.y);
+  }
+  minus(v) {
+    return new Vec2(this.x - v.x, this.y - v.y);
+  }
+}
+
+class Rect {
+  constructor(x, y, w, h) {
+    this.pos = new Vec2(x, y);
     this.w = w;
     this.h = h;
+  }
+
+  // check is mouse inside of rect
+  containsPoint(point) {
+    const { x, y } = this.pos;
+    const { w, h } = this;
+    return x < point.x && point.x < x + w && y < point.y && point.y < y + h;
   }
 }
 
@@ -18,6 +37,7 @@ export default class DrawController {
     this.bindedHandleMouseUp = this.handleMouseUp.bind(this);
     this.bindedHandleMouseMove = this.handleMouseMove.bind(this);
     // this.bindedHandleMouseMove = (e) => this.handleMouseMove(e);
+
     this.draw();
   }
 
@@ -28,18 +48,25 @@ export default class DrawController {
     this.context.fillRect(0, 0, 1000, 1000);
     // draw new
     this.context.fillStyle = "red";
-    this.context.fillRect(this.rect.x, this.rect.y, this.rect.w, this.rect.h);
+    this.context.fillRect(
+      this.rect.pos.x,
+      this.rect.pos.y,
+      this.rect.w,
+      this.rect.h
+    );
   }
 
-  // check is mouse inside of rect
-  clickedInsideOfRect(mouseX, mouseY) {
-    const { x, y, w, h } = this.rect;
-    return x < mouseX && mouseX < x + w && y < mouseY && mouseY < y + h;
+  // create vector of mouse x, y
+  getMousePos(e) {
+    return new Vec2(e.clientX, e.clientY);
   }
 
   handleMousedown(e) {
-    if (this.clickedInsideOfRect(e.clientX, e.clientY)) {
+    const mouseVec = this.getMousePos(e);
+
+    if (this.rect.containsPoint(mouseVec)) {
       this.isDragging = true;
+      this.offset = this.rect.pos.minus(mouseVec);
     }
   }
 
@@ -49,9 +76,9 @@ export default class DrawController {
 
   handleMouseMove(e) {
     if (this.isDragging) {
-      // set position of rect
-      this.rect.x = e.clientX;
-      this.rect.y = e.clientY;
+      const mouseVec = this.getMousePos(e);
+      // set position of rect (mouse position + offset)
+      this.rect.pos = mouseVec.plus(this.offset);
       // draw again
       this.draw();
     }
