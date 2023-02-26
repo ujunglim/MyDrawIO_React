@@ -3,7 +3,7 @@ import TestClosure from "./TestClosure";
 import TestBind from "./TestBind";
 
 function App() {
-  return <TestClosure />;
+  return <Canvas />;
 }
 
 export default App;

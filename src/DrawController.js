@@ -13,62 +13,59 @@ export default class DrawController {
     this.context = context;
     this.rect = new Rect(10, 10, 50, 50);
     this.isDragging = false;
-    this.bindedHandleMousedown = this.handleMousedown.bind(this);
-    this.bindedHandleMouseup = this.handleMouseup.bind(this);
-    this.bindedHandleMousemove = this.handleMousemove.bind(this);
 
-    this.updateCanvas();
+    this.bindedHandleMousedown = this.handleMousedown.bind(this);
+    this.bindedHandleMouseUp = this.handleMouseUp.bind(this);
+    this.bindedHandleMouseMove = this.handleMouseMove.bind(this);
+    // this.bindedHandleMouseMove = (e) => this.handleMouseMove(e);
+    this.draw();
   }
 
-  // update canvas
-  updateCanvas() {
-    // clear canvas
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    // draw again
+  // draw canvas
+  draw() {
+    // clean
     this.context.fillStyle = "beige";
-    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.fillRect(0, 0, 1000, 1000);
+    // draw new
     this.context.fillStyle = "red";
     this.context.fillRect(this.rect.x, this.rect.y, this.rect.w, this.rect.h);
   }
-  // check if coordinate is inside of a rect
-  clickedInsideOfRect(coordX, coordY, rect) {
-    return (
-      rect.x <= coordX &&
-      coordX <= rect.x + rect.w &&
-      rect.y <= coordY &&
-      coordY < rect.y + rect.h
-    );
+
+  // check is mouse inside of rect
+  clickedInsideOfRect(mouseX, mouseY) {
+    const { x, y, w, h } = this.rect;
+    return x < mouseX && mouseX < x + w && y < mouseY && mouseY < y + h;
   }
 
   handleMousedown(e) {
-    // can drag when mouse is down && inside of rect
-    if (this.clickedInsideOfRect(e.clientX, e.clientY, this.rect)) {
+    if (this.clickedInsideOfRect(e.clientX, e.clientY)) {
       this.isDragging = true;
     }
   }
-  handleMouseup(e) {
+
+  handleMouseUp() {
     this.isDragging = false;
   }
-  handleMousemove(e) {
+
+  handleMouseMove(e) {
     if (this.isDragging) {
+      // set position of rect
       this.rect.x = e.clientX;
       this.rect.y = e.clientY;
-      this.updateCanvas();
+      // draw again
+      this.draw();
     }
   }
 
-  // add event listener
-  addListener() {
-    // this.canvas.addEventListener("mousedown", this.handleMousedown.bind(this));
+  addEventListeners() {
     this.canvas.addEventListener("mousedown", this.bindedHandleMousedown);
-    this.canvas.addEventListener("mouseup", this.bindedHandleMouseup);
-    this.canvas.addEventListener("mousemove", this.bindedHandleMousemove);
+    this.canvas.addEventListener("mouseup", this.bindedHandleMouseUp);
+    this.canvas.addEventListener("mousemove", this.bindedHandleMouseMove);
   }
 
-  // remove event listener
-  removeListener() {
+  removeEventListeners() {
     this.canvas.removeEventListener("mousedown", this.bindedHandleMousedown);
-    this.canvas.removeEventListener("mouseup", this.bindedHandleMouseup);
-    this.canvas.removeEventListener("mousemove", this.bindedHandleMousemove);
+    this.canvas.removeEventListener("mouseup", this.bindedHandleMouseUp);
+    this.canvas.removeEventListener("mousemove", this.bindedHandleMouseMove);
   }
 }

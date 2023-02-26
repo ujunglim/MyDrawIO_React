@@ -8,10 +8,14 @@ function Canvas() {
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
+    // create drawController instance
     drawControllerRef.current = new DrawController(canvas, context);
-
-    drawControllerRef.current.addListener();
-    return () => drawControllerRef.current.removeListener();
+    // add event listeners
+    drawControllerRef.current.addEventListeners();
+    // remove them
+    return () => {
+      drawControllerRef.current.removeEventListeners();
+    };
   }, []); // [] create일때만 실행
 
   return (
