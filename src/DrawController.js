@@ -9,13 +9,17 @@ class Vec2 {
   minus(v) {
     return new Vec2(this.x - v.x, this.y - v.y);
   }
+  multiply(v) {
+    return new Vec2(this.x * v.x, this.y * v.y);
+  }
 }
 
 class Rect {
-  constructor(x, y, w, h) {
+  constructor(x, y, w, h, color) {
     this.pos = new Vec2(x, y);
     this.w = w;
     this.h = h;
+    this.color = color;
   }
 
   // check is mouse inside of rect
@@ -30,30 +34,51 @@ export default class DrawController {
   constructor(canvas, context) {
     this.canvas = canvas;
     this.context = context;
-    this.rect = new Rect(10, 10, 50, 50);
     this.isDragging = false;
+    this.rects = [];
+    this.targetRect = null;
 
     this.bindedHandleMousedown = this.handleMousedown.bind(this);
     this.bindedHandleMouseUp = this.handleMouseUp.bind(this);
     this.bindedHandleMouseMove = this.handleMouseMove.bind(this);
     // this.bindedHandleMouseMove = (e) => this.handleMouseMove(e);
 
-    this.draw();
+    this.init(100);
+    this.update();
   }
 
-  // draw canvas
-  draw() {
+  getRandomVec() {
+    return new Vec2(Math.random(), Math.random());
+  }
+
+  init(maxCount) {
+    const canvasSize = new Vec2(this.canvas.width, this.canvas.height);
+    const maxSize = new Vec2(200, 100);
+    const minSize = new Vec2(10, 5);
+
+    for (let i = 0; i < maxCount; i++) {
+      const size = this.getRandomVec()
+        .multiply(maxSize.minus(minSize))
+        .plus(minSize);
+
+      const pos = this.getRandomVec().multiply(canvasSize.minus(size));
+      const color = "hsl(" + 360 * Math.random() + ", 50%, 50%)";
+
+      this.rects.push(new Rect(pos.x, pos.y, size.x, size.y, color));
+    }
+    console.log(this.rects);
+  }
+
+  // update canvas
+  update() {
     // clean
     this.context.fillStyle = "beige";
-    this.context.fillRect(0, 0, 1000, 1000);
-    // draw new
-    this.context.fillStyle = "red";
-    this.context.fillRect(
-      this.rect.pos.x,
-      this.rect.pos.y,
-      this.rect.w,
-      this.rect.h
-    );
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    // update new
+    for (const rect of this.rects) {
+      this.context.fillStyle = rect.color;
+      this.context.fillRect(rect.pos.x, rect.pos.y, rect.w, rect.h);
+    }
   }
 
   // create vector of mouse x, y
@@ -64,9 +89,16 @@ export default class DrawController {
   handleMousedown(e) {
     const mouseVec = this.getMousePos(e);
 
-    if (this.rect.containsPoint(mouseVec)) {
-      this.isDragging = true;
-      this.offset = this.rect.pos.minus(mouseVec);
+    for (let i = this.rects.length - 1; i >= 0; i--) {
+      const rect = this.rects[i];
+      // find target rect
+      if (rect.containsPoint(mouseVec)) {
+        this.isDragging = true;
+        this.offset = rect.pos.minus(mouseVec);
+        this.targetRect = rect;
+        // let target to be on top
+        break;
+      }
     }
   }
 
@@ -78,9 +110,9 @@ export default class DrawController {
     if (this.isDragging) {
       const mouseVec = this.getMousePos(e);
       // set position of rect (mouse position + offset)
-      this.rect.pos = mouseVec.plus(this.offset);
-      // draw again
-      this.draw();
+      this.targetRect.pos = mouseVec.plus(this.offset);
+      // update again
+      this.update();
     }
   }
 
