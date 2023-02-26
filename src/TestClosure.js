@@ -131,6 +131,10 @@ function TestClosure() {
       onChange(a + b); // assume it takes long time...
     }
     addition(2, 3, (result) => console.log(result));
+
+    // getter and setter in same time (map, filter, sort...)
+    // dynamic setter
+    [3, 1, 4].sort((a, b) => a - b);
   }, []);
   return <div>TestClosure</div>;
 }
