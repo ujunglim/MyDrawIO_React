@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { PANEL_WIDTH } from "./config";
 import DrawController from "./DrawController";
 
 function Canvas() {
@@ -22,7 +23,7 @@ function Canvas() {
     <canvas
       id="myCanvas"
       ref={canvasRef}
-      width={window.innerWidth}
+      width={window.innerWidth - PANEL_WIDTH * 2}
       height={window.innerHeight}
     />
   );

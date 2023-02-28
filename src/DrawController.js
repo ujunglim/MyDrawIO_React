@@ -1,3 +1,5 @@
+import { PANEL_WIDTH } from "./config";
+
 class Vec2 {
   constructor(x, y) {
     this.x = x;
@@ -83,7 +85,13 @@ export default class DrawController {
 
   // create vector of mouse x, y
   getMousePos(e) {
-    return new Vec2(e.clientX, e.clientY);
+    return new Vec2(e.clientX - PANEL_WIDTH, e.clientY);
+  }
+
+  toTop(i) {
+    const target = this.rects[i];
+    this.rects.splice(i, 1);
+    this.rects.push(target);
   }
 
   handleMousedown(e) {
@@ -97,6 +105,7 @@ export default class DrawController {
         this.offset = rect.pos.minus(mouseVec);
         this.targetRect = rect;
         // let target to be on top
+        this.toTop(i);
         break;
       }
     }
