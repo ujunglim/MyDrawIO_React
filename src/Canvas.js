@@ -1,26 +1,30 @@
-import { useRef, useEffect } from "react";
-import { PANEL_WIDTH } from "./config";
-import DrawController from "./DrawController";
+import { useEffect, useRef } from "react";
+import { Consts } from "./Common/consts";
+import DrawControllerInstance from "./Controller/DrawController";
+import CanvasViewInstance from "./View/CanvasView";
 
-function Canvas({ canvasRef, drawControllerRef }) {
+function Canvas() {
+  const canvasRef = useRef();
+
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
-    // create drawController instance
-    drawControllerRef.current = new DrawController(canvas, context);
-    // add event listeners
-    drawControllerRef.current.addEventListeners();
-    // remove them
+    // view
+    CanvasViewInstance.init(canvas);
+    // controller
+    DrawControllerInstance.init();
+
+    // event
+    DrawControllerInstance.registerEventListener();
     return () => {
-      drawControllerRef.current.removeEventListeners();
+      DrawControllerInstance.unregisterEventListener();
     };
-  }, []); // [] create일때만 실행
+  }, []);
 
   return (
     <canvas
       id="myCanvas"
       ref={canvasRef}
-      width={window.innerWidth - PANEL_WIDTH * 2}
+      width={window.innerWidth - Consts.PANEL_WIDTH * 2}
       height={window.innerHeight}
     />
   );

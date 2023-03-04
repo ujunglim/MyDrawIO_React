@@ -1,11 +1,11 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/style-prop-object */
 import React from "react";
+import DrawControllerInstance from "./Controller/DrawController";
 
-function PanelRight({ drawControllerRef }) {
+function PanelRight() {
   const handleColorChange = (e) => {
-    console.log(e.target.value);
-    drawControllerRef.current.changeRectColor(e.target.value);
+    DrawControllerInstance.rectManager.changeRectColor(e.target.value);
   };
   return (
     <div className="panelRight">
