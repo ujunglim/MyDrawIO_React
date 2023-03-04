@@ -2,10 +2,7 @@ import { useRef, useEffect } from "react";
 import { PANEL_WIDTH } from "./config";
 import DrawController from "./DrawController";
 
-function Canvas() {
-  const canvasRef = useRef(null);
-  const drawControllerRef = useRef(null);
-
+function Canvas({ canvasRef, drawControllerRef }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");

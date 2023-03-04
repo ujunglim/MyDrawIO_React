@@ -2,7 +2,11 @@
 /* eslint-disable react/style-prop-object */
 import React from "react";
 
-function PanelRight() {
+function PanelRight({ drawControllerRef }) {
+  const handleColorChange = (e) => {
+    console.log(e.target.value);
+    drawControllerRef.current.changeRectColor(e.target.value);
+  };
   return (
     <div className="panelRight">
       <input type="text" placeholder="Search Shapes" />
@@ -11,6 +15,7 @@ function PanelRight() {
         title="Search"
         className={"searchIcon"}
       />
+      <input type={"color"} onChange={handleColorChange} />
     </div>
   );
 }

@@ -44,6 +44,7 @@ export default class DrawController {
     this.bindedHandleMouseUp = this.handleMouseUp.bind(this);
     this.bindedHandleMouseMove = this.handleMouseMove.bind(this);
     // this.bindedHandleMouseMove = (e) => this.handleMouseMove(e);
+    this.bindedChangeColor = this.changeRectColor.bind(this);
 
     this.init(100);
     this.update();
@@ -71,6 +72,17 @@ export default class DrawController {
     console.log(this.rects);
   }
 
+  // draw stroke to rect
+  markSelection() {
+    const {
+      pos: { x, y },
+      w,
+      h,
+    } = this.targetRect;
+    // this.context.strokeStyle = "red";
+    this.context.strokeRect(x, y, w, h);
+  }
+
   // update canvas
   update() {
     // clean
@@ -80,6 +92,10 @@ export default class DrawController {
     for (const rect of this.rects) {
       this.context.fillStyle = rect.color;
       this.context.fillRect(rect.pos.x, rect.pos.y, rect.w, rect.h);
+    }
+    // mark selection
+    if (this.targetRect) {
+      this.markSelection();
     }
   }
 
@@ -92,6 +108,12 @@ export default class DrawController {
     const target = this.rects[i];
     this.rects.splice(i, 1);
     this.rects.push(target);
+    this.update();
+  }
+
+  changeRectColor(color) {
+    this.rects[this.rects.length - 1].color = color;
+    this.update();
   }
 
   handleMousedown(e) {

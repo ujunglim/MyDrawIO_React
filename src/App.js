@@ -3,12 +3,16 @@ import TestClosure from "./TestClosure";
 import TestBind from "./TestBind";
 import TestVector from "./TestVector";
 import PanelRight from "./PanelRight";
+import { useRef } from "react";
 
 function App() {
+  const canvasRef = useRef(null);
+  const drawControllerRef = useRef(null);
+
   return (
     <div className="app">
-      <PanelRight />
-      <Canvas />
+      <PanelRight drawControllerRef={drawControllerRef} />
+      <Canvas canvasRef={canvasRef} drawControllerRef={drawControllerRef} />
     </div>
   );
 }
