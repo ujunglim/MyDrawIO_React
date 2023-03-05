@@ -19,7 +19,7 @@ class DrawController {
     this.rects = [];
     this.targetRect = null;
 
-    this.initRects(100);
+    // this.initRects(100);
     CanvasViewInstance.update();
 
     this.dataManager = new DataManager(this);
@@ -56,6 +56,12 @@ class DrawController {
 
       this.rects.push(new Rect(pos.x, pos.y, size.x, size.y, color));
     }
+  }
+
+  createRect() {
+    this.rects.push(new Rect(10, 10, 100, 50, "#fff"));
+    this.targetRect = this.rects[this.rects.length - 1];
+    CanvasViewInstance.update();
   }
 
   toTop(i) {

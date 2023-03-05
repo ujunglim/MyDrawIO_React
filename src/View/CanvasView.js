@@ -43,7 +43,6 @@ class CanvasView {
       w,
       h,
     } = targetRect;
-    // this.context.strokeStyle = "red";
     this.context.strokeRect(x, y, w, h);
   }
 }

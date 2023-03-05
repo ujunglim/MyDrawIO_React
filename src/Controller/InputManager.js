@@ -9,6 +9,7 @@ export default class InputManager {
     this.bindedHandleMousedown = this.handleMousedown.bind(this);
     this.bindedHandleMouseUp = this.handleMouseUp.bind(this);
     this.bindedHandleMouseMove = this.handleMouseMove.bind(this);
+    this.bindedHandleKeyDown = this.handleKeyDown.bind(this);
   }
 
   addEventListeners() {
@@ -16,6 +17,7 @@ export default class InputManager {
     canvas.addEventListener("mousedown", this.bindedHandleMousedown);
     canvas.addEventListener("mouseup", this.bindedHandleMouseUp);
     canvas.addEventListener("mousemove", this.bindedHandleMouseMove);
+    window.addEventListener("keydown", this.bindedHandleKeyDown);
   }
 
   removeEventListeners() {
@@ -23,6 +25,7 @@ export default class InputManager {
     canvas.removeEventListener("mousedown", this.bindedHandleMousedown);
     canvas.removeEventListener("mouseup", this.bindedHandleMouseUp);
     canvas.removeEventListener("mousemove", this.bindedHandleMouseMove);
+    window.removeEventListener("keydown", this.bindedHandleKeyDown);
   }
 
   // create vector of mouse x, y
@@ -41,7 +44,7 @@ export default class InputManager {
     for (let i = rects.length - 1; i >= 0; i--) {
       const rect = rects[i];
       // find target rect
-      if (rect.containsPoint(mouseVec)) {
+      if (rect.isInside(mouseVec)) {
         this.isDragging = true;
         this.offset = rect.pos.minus(mouseVec);
         controller.targetRect = rect;
@@ -69,6 +72,15 @@ export default class InputManager {
       // update again
       CanvasViewInstance.update();
       this.controller.dataManager.delaySave();
+    }
+  }
+
+  handleKeyDown(e) {
+    const controller = this.controller;
+    if (controller.targetRect && e.key === "Delete") {
+      controller.rects.pop();
+      controller.targetRect = null;
+      CanvasViewInstance.update();
     }
   }
 }

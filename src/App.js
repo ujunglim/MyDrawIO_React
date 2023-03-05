@@ -3,12 +3,14 @@ import TestClosure from "./TestClosure";
 import TestBind from "./TestBind";
 import TestVector from "./TestVector";
 import PanelRight from "./PanelRight";
+import PanelLeft from "./PanelLeft";
 
 function App() {
   return (
     <div className="app">
-      <PanelRight />
+      <PanelLeft />
       <Canvas />
+      <PanelRight />
     </div>
   );
 }
