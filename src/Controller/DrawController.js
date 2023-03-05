@@ -18,13 +18,15 @@ class DrawController {
   init() {
     this.rects = [];
     this.targetRect = null;
+    this.dragBox = null;
 
     // this.initRects(100);
-    CanvasViewInstance.update();
 
     this.dataManager = new DataManager(this);
     this.inputManager = new InputManager(this);
     this.rectManager = new RectManager(this);
+
+    CanvasViewInstance.draw();
   }
 
   registerEventListener() {
@@ -33,6 +35,10 @@ class DrawController {
 
   unregisterEventListener() {
     this.inputManager.removeEventListeners();
+  }
+
+  draw() {
+    CanvasViewInstance.draw();
   }
 
   getRandomVec() {
@@ -56,12 +62,6 @@ class DrawController {
 
       this.rects.push(new Rect(pos.x, pos.y, size.x, size.y, color));
     }
-  }
-
-  createRect() {
-    this.rects.push(new Rect(10, 10, 100, 50, "#fff"));
-    this.targetRect = this.rects[this.rects.length - 1];
-    CanvasViewInstance.update();
   }
 
   toTop(i) {

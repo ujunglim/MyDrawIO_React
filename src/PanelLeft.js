@@ -4,7 +4,7 @@ import DrawControllerInstance from "./Controller/DrawController";
 
 function PanelLeft() {
   const handleCreateRect = () => {
-    DrawControllerInstance.createRect();
+    DrawControllerInstance.rectManager.createRect();
   };
   return (
     <div className="panel">

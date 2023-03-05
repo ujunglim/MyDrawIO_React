@@ -1,6 +1,8 @@
 import { Consts } from "../Common/consts";
+import Rect from "../Model/Rect";
 import Vec2 from "../Model/Vec2";
 import CanvasViewInstance from "../View/CanvasView";
+import DrawControllerInstance from "./DrawController";
 
 export default class InputManager {
   constructor(controller) {
@@ -39,14 +41,15 @@ export default class InputManager {
 
     const lastTargetRect = this.controller.targetRect;
     controller.targetRect = null;
-    const mouseVec = this.getMousePos(e);
+
+    this.startDragPoint = this.getMousePos(e);
+    this.isDragging = true;
 
     for (let i = rects.length - 1; i >= 0; i--) {
       const rect = rects[i];
       // find target rect
-      if (rect.isInside(mouseVec)) {
-        this.isDragging = true;
-        this.offset = rect.pos.minus(mouseVec);
+      if (rect.isInside(this.startDragPoint)) {
+        this.offset = rect.pos.minus(this.startDragPoint);
         controller.targetRect = rect;
         // let target to be on top
         controller.toTop(i);
@@ -54,33 +57,48 @@ export default class InputManager {
         break;
       }
     }
-    // update when there is change
+    // draw when there is change
     if (lastTargetRect !== controller.targetRect) {
-      CanvasViewInstance.update();
+      controller.draw();
     }
   }
 
   handleMouseUp() {
     this.isDragging = false;
+    this.startDragPoint = null;
+    this.endDragPoint = null;
+    this.controller.dragBox = null;
+    this.controller.draw();
   }
 
   handleMouseMove(e) {
     if (this.isDragging) {
-      const mouseVec = this.getMousePos(e);
-      // set position of rect (mouse position + offset)
-      this.controller.targetRect.pos = mouseVec.plus(this.offset);
-      // update again
-      CanvasViewInstance.update();
+      this.endDragPoint = this.getMousePos(e);
+      // selected target rect
+      if (this.controller.targetRect) {
+        // set position of rect (mouse position + offset)
+        this.controller.targetRect.pos = this.endDragPoint.plus(this.offset);
+      } else if (this.startDragPoint) {
+        // drag selection size
+        const size = this.endDragPoint.minus(this.startDragPoint);
+
+        this.controller.dragBox = new Rect(
+          this.startDragPoint.x,
+          this.startDragPoint.y,
+          size.x,
+          size.y
+        );
+      }
+
+      // draw again
+      this.controller.draw();
       this.controller.dataManager.delaySave();
     }
   }
 
   handleKeyDown(e) {
-    const controller = this.controller;
-    if (controller.targetRect && e.key === "Delete") {
-      controller.rects.pop();
-      controller.targetRect = null;
-      CanvasViewInstance.update();
+    if (e.key === "Delete") {
+      DrawControllerInstance.rectManager.deleteRect();
     }
   }
 }

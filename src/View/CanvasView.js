@@ -15,23 +15,24 @@ class CanvasView {
     this.context = canvas.getContext("2d");
   }
 
-  // update canvas
-  update() {
+  // draw canvas
+  draw() {
     const rects = DrawControllerInstance.rects;
 
     // clean
     this.context.fillStyle = "beige";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    // update new
+    // draw new
     for (const rect of rects) {
       this.context.fillStyle = rect.color;
       this.context.fillRect(rect.pos.x, rect.pos.y, rect.w, rect.h);
     }
-    this.updateSelection();
+    this.drawTargetRect();
+    this.drawDragBox();
   }
 
   // draw stroke to rect
-  updateSelection() {
+  drawTargetRect() {
     const targetRect = DrawControllerInstance.targetRect;
 
     if (!targetRect) {
@@ -44,6 +45,19 @@ class CanvasView {
       h,
     } = targetRect;
     this.context.strokeRect(x, y, w, h);
+  }
+
+  // drag selection
+  drawDragBox() {
+    const dragBox = DrawControllerInstance.dragBox;
+    if (dragBox) {
+      CanvasViewInstance.context.strokeRect(
+        dragBox.pos.x,
+        dragBox.pos.y,
+        dragBox.w,
+        dragBox.h
+      );
+    }
   }
 }
 
