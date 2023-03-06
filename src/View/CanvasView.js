@@ -34,17 +34,30 @@ class CanvasView {
   // draw stroke to rect
   drawTargetRect() {
     const targetRect = DrawControllerInstance.targetRect;
+    const targets = DrawControllerInstance.targets;
 
-    if (!targetRect) {
+    if (!targetRect && !targets.length) {
       return;
     }
 
-    const {
-      pos: { x, y },
-      w,
-      h,
-    } = targetRect;
-    this.context.strokeRect(x, y, w, h);
+    if (targetRect) {
+      const {
+        pos: { x, y },
+        w,
+        h,
+      } = targetRect;
+      this.context.strokeRect(x, y, w, h);
+      return;
+    }
+
+    for (const target of targets) {
+      const {
+        pos: { x, y },
+        w,
+        h,
+      } = target;
+      this.context.strokeRect(x, y, w, h);
+    }
   }
 
   // drag selection

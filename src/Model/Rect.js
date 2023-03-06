@@ -1,3 +1,4 @@
+import DrawControllerInstance from "../Controller/DrawController";
 import Vec2 from "./Vec2";
 
 export default class Rect {
@@ -9,9 +10,25 @@ export default class Rect {
   }
 
   // check whether a point is inside a rectangle
-  isInside(point) {
+  contains(point) {
     const { x, y } = this.pos;
     const { w, h } = this;
     return x < point.x && point.x < x + w && y < point.y && point.y < y + h;
+  }
+
+  // check whether rect is inside of drag box
+  isInsideDragBox() {
+    const {
+      pos: { x: dragBoxX, y: dragBoxY },
+      w: dragBoxW,
+      h: dragBoxH,
+    } = DrawControllerInstance.dragBox;
+
+    return (
+      dragBoxX <= this.pos.x &&
+      this.pos.x + this.w <= dragBoxX + dragBoxW &&
+      dragBoxY <= this.pos.y &&
+      this.pos.y + this.h <= dragBoxY + dragBoxH
+    );
   }
 }

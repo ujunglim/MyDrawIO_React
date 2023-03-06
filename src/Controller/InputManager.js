@@ -41,6 +41,7 @@ export default class InputManager {
 
     const lastTargetRect = this.controller.targetRect;
     controller.targetRect = null;
+    controller.targets = [];
 
     this.startDragPoint = this.getMousePos(e);
     this.isDragging = true;
@@ -48,7 +49,7 @@ export default class InputManager {
     for (let i = rects.length - 1; i >= 0; i--) {
       const rect = rects[i];
       // find target rect
-      if (rect.isInside(this.startDragPoint)) {
+      if (rect.contains(this.startDragPoint)) {
         this.offset = rect.pos.minus(this.startDragPoint);
         controller.targetRect = rect;
         // let target to be on top
@@ -65,6 +66,16 @@ export default class InputManager {
 
   handleMouseUp() {
     this.isDragging = false;
+
+    if (this.controller.dragBox) {
+      for (const rect of this.controller.rects) {
+        if (rect.isInsideDragBox()) {
+          this.controller.targets.push(rect);
+        }
+      }
+    }
+    console.log(this.controller.targets);
+
     this.startDragPoint = null;
     this.endDragPoint = null;
     this.controller.dragBox = null;

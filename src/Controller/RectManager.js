@@ -15,12 +15,16 @@ export default class RectManager {
   // ============= Edit ===============
   changeRectColor(color) {
     const controller = this.controller;
-    const rects = this.controller.rects;
     if (controller.targetRect) {
-      rects[rects.length - 1].color = color;
-      controller.draw();
-      controller.dataManager.delaySave();
+      controller.targetRect.color = color;
+      // rects[rects.length - 1].color = color;
+    } else if (controller.targets.length) {
+      for (const target of controller.targets) {
+        target.color = color;
+      }
     }
+    controller.draw();
+    controller.dataManager.delaySave();
   }
   // ============= Delete ===============
   deleteRect() {
