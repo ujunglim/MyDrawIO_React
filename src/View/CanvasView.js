@@ -29,6 +29,8 @@ class CanvasView {
     }
     this.drawTargetRect();
     this.drawDragBox();
+    this.drawLines();
+
   }
 
   // draw stroke to rect
@@ -70,6 +72,26 @@ class CanvasView {
         dragBox.w,
         dragBox.h
       );
+    }
+  }
+
+  drawALine(line) {
+    this.context.beginPath();
+    this.context.moveTo(line.x0, line.y0);
+    this.context.lineTo(line.x1, line.y1);
+    this.context.stroke();
+  }
+
+  drawLines() {
+    const drawingLine = DrawControllerInstance.drawingLine;
+    const lines = DrawControllerInstance.lines;
+
+    if (drawingLine) {
+      this.drawALine(drawingLine);
+    }
+
+    for (const line of lines) {
+      this.drawALine(line)
     }
   }
 }

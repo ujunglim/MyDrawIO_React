@@ -8,6 +8,7 @@ export default class InputManager {
   constructor(controller) {
     this.controller = controller;
     this.isDragging = false;
+    this.isLining = true;
     this.bindedHandleMousedown = this.handleMousedown.bind(this);
     this.bindedHandleMouseUp = this.handleMouseUp.bind(this);
     this.bindedHandleMouseMove = this.handleMouseMove.bind(this);
@@ -74,7 +75,17 @@ export default class InputManager {
         }
       }
     }
-    console.log(this.controller.targets);
+    // console.log(this.controller.targets);
+
+    // drag line
+    if (this.endDragPoint) {
+      DrawControllerInstance.lines.push({
+        x0: this.startDragPoint.x,
+        y0: this.startDragPoint.y,
+        x1: this.endDragPoint.x,
+        y1: this.endDragPoint.y,
+      })
+    }
 
     this.startDragPoint = null;
     this.endDragPoint = null;
@@ -89,7 +100,7 @@ export default class InputManager {
       if (this.controller.targetRect) {
         // set position of rect (mouse position + offset)
         this.controller.targetRect.pos = this.endDragPoint.plus(this.offset);
-      } else if (this.startDragPoint) {
+      } else if (this.startDragPoint && !this.isLining) {
         // drag selection size
         const size = this.endDragPoint.minus(this.startDragPoint);
 
@@ -99,6 +110,10 @@ export default class InputManager {
           size.x,
           size.y
         );
+      }
+      else if (this.startDragPoint && this.isLining) {
+        this.controller.drawingLine = { x0: this.startDragPoint.x, y0: this.startDragPoint.y, x1: this.endDragPoint.x, y1: this.endDragPoint.y };
+        CanvasViewInstance.drawLines()
       }
 
       // draw again

@@ -1,11 +1,14 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/style-prop-object */
+import { Button, ColorPicker } from "@ui5/webcomponents-react";
 import React from "react";
 import DrawControllerInstance from "./Controller/DrawController";
 
 function PanelRight() {
   const handleColorChange = (e) => {
-    DrawControllerInstance.rectManager.changeRectColor(e.target.value);
+    if(DrawControllerInstance.targetRect || DrawControllerInstance.targets.length) {
+      DrawControllerInstance.rectManager.changeRectColor(e.target.color);
+    }
   };
 
   const handleDelete = () => {
@@ -13,8 +16,8 @@ function PanelRight() {
   };
   return (
     <div className="panel">
-      <input type={"color"} onChange={handleColorChange} />
-      <button onClick={handleDelete}>Delete</button>
+      <ColorPicker onChange={handleColorChange} />
+      <Button onClick={handleDelete}>Delete</Button>
     </div>
   );
 }
