@@ -1,4 +1,4 @@
-import { Consts } from "../Common/consts";
+import { constants } from "../Common/constants";
 
 // load and save data
 export default class DataManager {
@@ -16,6 +16,6 @@ export default class DataManager {
   }
 
   delaySave() {
-    this.timeToSave = Date.now() + Consts.DELAY_SAVE_TIME;
+    this.timeToSave = Date.now() + constants.DELAY_SAVE_TIME;
   }
 }

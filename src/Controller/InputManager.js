@@ -1,4 +1,4 @@
-import { Consts } from "../Common/consts";
+import { constants } from "../Common/constants";
 import Rect from "../Model/Rect";
 import Vec2 from "../Model/Vec2";
 import CanvasViewInstance from "../View/CanvasView";
@@ -33,7 +33,7 @@ export default class InputManager {
 
   // create vector of mouse x, y
   getMousePos(e) {
-    return new Vec2(e.clientX - Consts.PANEL_WIDTH, e.clientY);
+    return new Vec2(e.clientX - constants.PANEL_WIDTH, e.clientY);
   }
 
   handleMousedown(e) {
@@ -53,8 +53,16 @@ export default class InputManager {
 
     for (let i = rects.length - 1; i >= 0; i--) {
       const rect = rects[i];
-      // find target rect
-      if (rect.contains(this.startDragPoint)) {
+      // click interface of rect
+      for(const i of rect.interfaces) {
+        if(i.contains(this.startDragPoint)) {
+          console.log('lining')
+          this.isLining = true;
+        }
+      }
+
+      // click rect
+      if (rect.outerContains(this.startDragPoint)) {
         this.offset = rect.pos.minus(this.startDragPoint);
         // set targets
         controller.targets = [rect];
@@ -73,6 +81,7 @@ export default class InputManager {
 
   handleMouseUp() {
     this.isDragging = false;
+    this.isLining = false;
 
     if (this.controller.dragBox) {
       for (const rect of this.controller.rects) {
@@ -104,10 +113,12 @@ export default class InputManager {
     if (this.isDragging) {
       this.endDragPoint = this.getMousePos(e);
       // move targets
-      if (this.controller.targets.length) {
+      if (!this.isLining && this.controller.targets.length) {
         // set position of rect (mouse position + offset)
         for (const target of this.controller.targets) {
           target.pos = this.endDragPoint.plus(this.offset);
+          target.setOuterRect(target.outerRect.outer_w, target.outerRect.outer_h);
+          target.setInterfaces();
         }
         // this.controller.targetRect.pos = this.endDragPoint.plus(this.offset);
       }

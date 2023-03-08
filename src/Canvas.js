@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Consts } from "./Common/consts";
+import { constants } from "./Common/constants";
 import DrawControllerInstance from "./Controller/DrawController";
 import CanvasViewInstance from "./View/CanvasView";
 
@@ -24,7 +24,7 @@ function Canvas() {
     <canvas
       id="myCanvas"
       ref={canvasRef}
-      width={window.innerWidth - Consts.PANEL_WIDTH * 2}
+      width={window.innerWidth - constants.PANEL_WIDTH * 2}
       height={window.innerHeight}
     />
   );

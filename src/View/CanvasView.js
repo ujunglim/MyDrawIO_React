@@ -1,3 +1,4 @@
+import { constants } from "../Common/constants";
 import DrawControllerInstance from "../Controller/DrawController";
 
 let instance;
@@ -34,6 +35,16 @@ class CanvasView {
           h,
         } = rect;
         this.context.strokeRect(x, y, w, h);
+
+        // draw outer stroke
+        // const {pos, outer_w, outer_h} = rect.outerRect;
+        // this.context.strokeRect(pos.x, pos.y, outer_w, outer_h);
+
+        // draw interfaces
+        for(const i of rect.interfaces) {
+          this.context.fillStyle = 'blue';
+          this.context.fillRect(i.pos.x, i.pos.y, constants.INTERFACE_SIZE, constants.INTERFACE_SIZE)
+        }
       }
     }
     // this.drawTargetRect();
