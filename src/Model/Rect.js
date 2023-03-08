@@ -7,6 +7,7 @@ export default class Rect {
     this.w = w;
     this.h = h;
     this.color = color;
+    this.isSelected = false;
   }
 
   // check whether a point is inside a rectangle

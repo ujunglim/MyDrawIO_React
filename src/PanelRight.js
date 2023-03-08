@@ -6,7 +6,7 @@ import DrawControllerInstance from "./Controller/DrawController";
 
 function PanelRight() {
   const handleColorChange = (e) => {
-    if(DrawControllerInstance.targetRect || DrawControllerInstance.targets.length) {
+    if (DrawControllerInstance.targets.length) {
       DrawControllerInstance.rectManager.changeRectColor(e.target.color);
     }
   };

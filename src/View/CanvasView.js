@@ -26,40 +26,19 @@ class CanvasView {
     for (const rect of rects) {
       this.context.fillStyle = rect.color;
       this.context.fillRect(rect.pos.x, rect.pos.y, rect.w, rect.h);
+      // draw selected stroke
+      if (rect.isSelected) {
+        const {
+          pos: { x, y },
+          w,
+          h,
+        } = rect;
+        this.context.strokeRect(x, y, w, h);
+      }
     }
-    this.drawTargetRect();
+    // this.drawTargetRect();
     this.drawDragBox();
     this.drawLines();
-
-  }
-
-  // draw stroke to rect
-  drawTargetRect() {
-    const targetRect = DrawControllerInstance.targetRect;
-    const targets = DrawControllerInstance.targets;
-
-    if (!targetRect && !targets.length) {
-      return;
-    }
-
-    if (targetRect) {
-      const {
-        pos: { x, y },
-        w,
-        h,
-      } = targetRect;
-      this.context.strokeRect(x, y, w, h);
-      return;
-    }
-
-    for (const target of targets) {
-      const {
-        pos: { x, y },
-        w,
-        h,
-      } = target;
-      this.context.strokeRect(x, y, w, h);
-    }
   }
 
   // drag selection
@@ -91,7 +70,7 @@ class CanvasView {
     }
 
     for (const line of lines) {
-      this.drawALine(line)
+      this.drawALine(line);
     }
   }
 }

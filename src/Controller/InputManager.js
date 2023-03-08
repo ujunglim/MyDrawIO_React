@@ -8,7 +8,7 @@ export default class InputManager {
   constructor(controller) {
     this.controller = controller;
     this.isDragging = false;
-    this.isLining = true;
+    this.isLining = false;
     this.bindedHandleMousedown = this.handleMousedown.bind(this);
     this.bindedHandleMouseUp = this.handleMouseUp.bind(this);
     this.bindedHandleMouseMove = this.handleMouseMove.bind(this);
@@ -40,8 +40,12 @@ export default class InputManager {
     const controller = this.controller;
     const rects = controller.rects;
 
-    const lastTargetRect = this.controller.targetRect;
-    controller.targetRect = null;
+    // const lastTargetRect = this.controller.targetRect;
+
+    // clear previous targets
+    for (const target of controller.targets) {
+      target.isSelected = false;
+    }
     controller.targets = [];
 
     this.startDragPoint = this.getMousePos(e);
@@ -52,7 +56,9 @@ export default class InputManager {
       // find target rect
       if (rect.contains(this.startDragPoint)) {
         this.offset = rect.pos.minus(this.startDragPoint);
-        controller.targetRect = rect;
+        // set targets
+        controller.targets = [rect];
+        rect.isSelected = true;
         // let target to be on top
         controller.toTop(i);
         controller.dataManager.delaySave();
@@ -60,9 +66,9 @@ export default class InputManager {
       }
     }
     // draw when there is change
-    if (lastTargetRect !== controller.targetRect) {
-      controller.draw();
-    }
+    // if (lastTargetRect !== controller.targetRect) {
+    controller.draw();
+    // }
   }
 
   handleMouseUp() {
@@ -72,19 +78,20 @@ export default class InputManager {
       for (const rect of this.controller.rects) {
         if (rect.isInsideDragBox()) {
           this.controller.targets.push(rect);
+          rect.isSelected = true;
         }
       }
     }
     // console.log(this.controller.targets);
 
     // drag line
-    if (this.endDragPoint) {
+    if (this.lining && this.endDragPoint) {
       DrawControllerInstance.lines.push({
         x0: this.startDragPoint.x,
         y0: this.startDragPoint.y,
         x1: this.endDragPoint.x,
         y1: this.endDragPoint.y,
-      })
+      });
     }
 
     this.startDragPoint = null;
@@ -96,11 +103,16 @@ export default class InputManager {
   handleMouseMove(e) {
     if (this.isDragging) {
       this.endDragPoint = this.getMousePos(e);
-      // selected target rect
-      if (this.controller.targetRect) {
+      // move targets
+      if (this.controller.targets.length) {
         // set position of rect (mouse position + offset)
-        this.controller.targetRect.pos = this.endDragPoint.plus(this.offset);
-      } else if (this.startDragPoint && !this.isLining) {
+        for (const target of this.controller.targets) {
+          target.pos = this.endDragPoint.plus(this.offset);
+        }
+        // this.controller.targetRect.pos = this.endDragPoint.plus(this.offset);
+      }
+      // drag box
+      else if (this.startDragPoint && !this.isLining) {
         // drag selection size
         const size = this.endDragPoint.minus(this.startDragPoint);
 
@@ -111,9 +123,15 @@ export default class InputManager {
           size.y
         );
       }
+      // draw line
       else if (this.startDragPoint && this.isLining) {
-        this.controller.drawingLine = { x0: this.startDragPoint.x, y0: this.startDragPoint.y, x1: this.endDragPoint.x, y1: this.endDragPoint.y };
-        CanvasViewInstance.drawLines()
+        this.controller.drawingLine = {
+          x0: this.startDragPoint.x,
+          y0: this.startDragPoint.y,
+          x1: this.endDragPoint.x,
+          y1: this.endDragPoint.y,
+        };
+        CanvasViewInstance.drawLines();
       }
 
       // draw again
