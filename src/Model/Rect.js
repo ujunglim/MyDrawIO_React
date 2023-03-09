@@ -1,9 +1,9 @@
 import { constants } from "../Common/constants";
 import DrawControllerInstance from "../Controller/DrawController";
-import Interface from "../Controller/Interface";
 import Vec2 from "./Vec2";
+import Port from "./Port";
 
-const interfaceSize = constants.INTERFACE_SIZE;
+const portSize = constants.PORT_SIZE;
 
 export default class Rect {
   constructor(x, y, w, h, color) {
@@ -13,29 +13,36 @@ export default class Rect {
     this.color = color;
     this.isSelected = false;
 
-    // params: init outer rect width, height
-    this.setOuterRect(this.w + 2 * interfaceSize, this.h + 2 * interfaceSize)
-    this.setInterfaces();
+    // params: init outer rect width, height 
+    this.setOuterRect(this.w + 2 * portSize, this.h + 2 * portSize);
+    this.createPorts();
   }
 
   setOuterRect(outer_w, outer_h) {
     this.outerRect = {
-      pos: this.pos.minus(new Vec2(interfaceSize, interfaceSize)),
+      pos: this.pos.minus(new Vec2(portSize, portSize)),
       outer_w,
       outer_h,
     }
   }
 
-  setInterfaces() {
-    const halfX = this.pos.x + (this.w-interfaceSize) / 2;
-    const halfY = this.pos.y + (this.h-interfaceSize) / 2;
+  // create Ports
+  createPorts() {
+    const halfX = (this.w-portSize) / 2;
+    const halfY = (this.h-portSize) / 2;
 
-    this.interfaces = [
-      new Interface(halfX, this.pos.y - interfaceSize / 2),
-      new Interface(this.pos.x + this.w - interfaceSize / 2, halfY),
-      new Interface(halfX, this.pos.y + this.h - interfaceSize / 2),
-      new Interface(this.pos.x - interfaceSize / 2, halfY),
+    this.ports = [
+      new Port(halfX, -portSize / 2, this),
+      new Port(this.w - portSize / 2, halfY, this),
+      new Port(halfX, this.h - portSize / 2, this),
+      new Port(-portSize / 2, halfY, this),
     ]
+  }
+
+  updatePortsPos() {
+    for(const port of this.ports) {
+      port.updatePos();
+    }
   }
 
   // check whether a point is inside a rectangle

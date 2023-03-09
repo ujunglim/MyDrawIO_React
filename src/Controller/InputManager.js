@@ -53,9 +53,9 @@ export default class InputManager {
 
     for (let i = rects.length - 1; i >= 0; i--) {
       const rect = rects[i];
-      // click interface of rect
-      for(const i of rect.interfaces) {
-        if(i.contains(this.startDragPoint)) {
+      // click port of rect
+      for(const port of rect.ports) {
+        if(port.contains(this.startDragPoint)) {
           console.log('lining')
           this.isLining = true;
         }
@@ -118,7 +118,7 @@ export default class InputManager {
         for (const target of this.controller.targets) {
           target.pos = this.endDragPoint.plus(this.offset);
           target.setOuterRect(target.outerRect.outer_w, target.outerRect.outer_h);
-          target.setInterfaces();
+          target.updatePortsPos();
         }
         // this.controller.targetRect.pos = this.endDragPoint.plus(this.offset);
       }

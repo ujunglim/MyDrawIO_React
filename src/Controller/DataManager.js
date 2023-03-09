@@ -9,7 +9,7 @@ export default class DataManager {
     setInterval(() => {
       if (this.timeToSave > 0 && Date.now() >= this.timeToSave) {
         this.timeToSave = -1; // disable
-        localStorage.setItem("rects", JSON.stringify(this.controller.rects));
+        // localStorage.setItem("rects", JSON.stringify(this.controller.rects));
         console.log("saved!");
       }
     }, 1000);

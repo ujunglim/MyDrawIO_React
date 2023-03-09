@@ -1,5 +1,4 @@
 import Rect from "../Model/Rect";
-import CanvasViewInstance from "../View/CanvasView";
 
 export default class RectManager {
   constructor(controller) {

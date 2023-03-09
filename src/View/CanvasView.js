@@ -40,10 +40,10 @@ class CanvasView {
         // const {pos, outer_w, outer_h} = rect.outerRect;
         // this.context.strokeRect(pos.x, pos.y, outer_w, outer_h);
 
-        // draw interfaces
-        for(const i of rect.interfaces) {
+        // draw ports
+        for(const port of rect.ports) {
           this.context.fillStyle = 'blue';
-          this.context.fillRect(i.pos.x, i.pos.y, constants.INTERFACE_SIZE, constants.INTERFACE_SIZE)
+          this.context.fillRect(port.globalPos.x, port.globalPos.y, constants.PORT_SIZE, constants.PORT_SIZE)
         }
       }
     }

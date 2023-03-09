@@ -10,7 +10,7 @@ function App() {
     <div className="app">
       <PanelLeft />
       <Canvas />
-      <PanelRight />
+      {/* <PanelRight /> */}
     </div>
   );
 }
