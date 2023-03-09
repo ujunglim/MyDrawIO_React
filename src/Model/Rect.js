@@ -12,6 +12,7 @@ export default class Rect {
     this.h = h;
     this.color = color;
     this.isSelected = false;
+    this.isHovered = false;
 
     // params: init outer rect width, height 
     this.setOuterRect(this.w + 2 * portSize, this.h + 2 * portSize);

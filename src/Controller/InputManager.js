@@ -1,4 +1,5 @@
 import { constants } from "../Common/constants";
+import Line from "../Model/Line";
 import Rect from "../Model/Rect";
 import Vec2 from "../Model/Vec2";
 import CanvasViewInstance from "../View/CanvasView";
@@ -9,6 +10,7 @@ export default class InputManager {
     this.controller = controller;
     this.isDragging = false;
     this.isLining = false;
+    this.lineStartPort = null;
     this.bindedHandleMousedown = this.handleMousedown.bind(this);
     this.bindedHandleMouseUp = this.handleMouseUp.bind(this);
     this.bindedHandleMouseMove = this.handleMouseMove.bind(this);
@@ -58,6 +60,7 @@ export default class InputManager {
         if(port.contains(this.startDragPoint)) {
           console.log('lining')
           this.isLining = true;
+          this.lineStartPort = port;
         }
       }
 
@@ -79,10 +82,9 @@ export default class InputManager {
     // }
   }
 
-  handleMouseUp() {
-    this.isDragging = false;
-    this.isLining = false;
-
+  handleMouseUp(e) {
+    const currPos = this.getMousePos(e);
+    // dragbox
     if (this.controller.dragBox) {
       for (const rect of this.controller.rects) {
         if (rect.isInsideDragBox()) {
@@ -93,23 +95,48 @@ export default class InputManager {
     }
     // console.log(this.controller.targets);
 
-    // drag line
-    if (this.lining && this.endDragPoint) {
-      DrawControllerInstance.lines.push({
-        x0: this.startDragPoint.x,
-        y0: this.startDragPoint.y,
-        x1: this.endDragPoint.x,
-        y1: this.endDragPoint.y,
-      });
+    // line
+    if (this.isLining) {
+      // find end port of line
+      for (let i = this.controller.rects.length - 1; i >= 0; i--) {
+        const rect = this.controller.rects[i];
+        // find shape except itself
+        if (!this.controller.targets[0].outerContains(currPos) && rect.outerContains(currPos)) {
+          for (const port of rect.ports) {
+            if (port.contains(currPos)) {
+              DrawControllerInstance.lines.push(new Line(this.lineStartPort, port));
+            }
+          }
+        }
+      }
     }
 
+    // reset
     this.startDragPoint = null;
     this.endDragPoint = null;
+    this.isDragging = false;
+    this.isLining = false;
     this.controller.dragBox = null;
+    this.controller.drawingLine = null;
     this.controller.draw();
   }
 
   handleMouseMove(e) {
+    // clear previous hover
+    let hoveringShape = this.controller.hoveringShape;
+    if (hoveringShape) {
+      hoveringShape.isHovered = false;
+      hoveringShape = null;
+    }
+    // hover
+    for (let i = this.controller.rects.length - 1; i >= 0; i--) {
+      const rect = this.controller.rects[i];
+      if (rect.outerContains(this.getMousePos(e))) {
+        rect.isHovered = true;
+        this.controller.hoveringShape = rect;
+      }
+    }
+    // drag
     if (this.isDragging) {
       this.endDragPoint = this.getMousePos(e);
       // move targets
@@ -119,8 +146,11 @@ export default class InputManager {
           target.pos = this.endDragPoint.plus(this.offset);
           target.setOuterRect(target.outerRect.outer_w, target.outerRect.outer_h);
           target.updatePortsPos();
+          // update line position
+          for (const line of this.controller.lines) {
+            line.updateStartEndPoints();
+          }
         }
-        // this.controller.targetRect.pos = this.endDragPoint.plus(this.offset);
       }
       // drag box
       else if (this.startDragPoint && !this.isLining) {
@@ -135,20 +165,23 @@ export default class InputManager {
         );
       }
       // draw line
-      else if (this.startDragPoint && this.isLining) {
+      else if (this.isLining) {
         this.controller.drawingLine = {
-          x0: this.startDragPoint.x,
-          y0: this.startDragPoint.y,
-          x1: this.endDragPoint.x,
-          y1: this.endDragPoint.y,
+          startPoint: {
+            x: this.lineStartPort.globalPos.x,
+            y: this.lineStartPort.globalPos.y
+          },
+          endPoint: {
+            x: this.endDragPoint.x,
+            y: this.endDragPoint.y,
+          }
         };
         CanvasViewInstance.drawLines();
       }
-
-      // draw again
-      this.controller.draw();
-      this.controller.dataManager.delaySave();
     }
+     // draw
+     this.controller.draw();
+     this.controller.dataManager.delaySave();
   }
 
   handleKeyDown(e) {

@@ -18,11 +18,12 @@ class DrawController {
   init() {
     this.rects = [];
     this.targets = [];
+    this.hoveringShape = null;
     this.dragBox = null;
     this.drawingLine = null;
     this.lines = [];
 
-    this.initRects(20);
+    this.initRects(2);
 
     this.dataManager = new DataManager(this);
     this.inputManager = new InputManager(this);

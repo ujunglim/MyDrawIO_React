@@ -27,8 +27,8 @@ class CanvasView {
     for (const rect of rects) {
       this.context.fillStyle = rect.color;
       this.context.fillRect(rect.pos.x, rect.pos.y, rect.w, rect.h);
-      // draw selected stroke
-      if (rect.isSelected) {
+      // draw selected stroke and ports
+      if (rect.isSelected || rect.isHovered) {
         const {
           pos: { x, y },
           w,
@@ -41,7 +41,7 @@ class CanvasView {
         // this.context.strokeRect(pos.x, pos.y, outer_w, outer_h);
 
         // draw ports
-        for(const port of rect.ports) {
+        for (const port of rect.ports) {
           this.context.fillStyle = 'blue';
           this.context.fillRect(port.globalPos.x, port.globalPos.y, constants.PORT_SIZE, constants.PORT_SIZE)
         }
@@ -65,10 +65,12 @@ class CanvasView {
     }
   }
 
-  drawALine(line) {
+  drawALine (line) {
+    const halfPortSize = constants.PORT_SIZE / 2;
+
     this.context.beginPath();
-    this.context.moveTo(line.x0, line.y0);
-    this.context.lineTo(line.x1, line.y1);
+    this.context.moveTo(line.startPoint.x + halfPortSize, line.startPoint.y + halfPortSize);
+    this.context.lineTo(line.endPoint.x + halfPortSize, line.endPoint.y + halfPortSize);
     this.context.stroke();
   }
 
