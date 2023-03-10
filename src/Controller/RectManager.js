@@ -10,7 +10,7 @@ export default class RectManager {
     const rects = this.controller.rects;
     rects.push(new Rect(10, 10, 100, 50, "#fff"));
     this.controller.targets = rects[rects.length - 1];
-    this.controller.draw();
+    this.controller.render();
   }
   // ============= Edit ===============
   changeRectColor(color) {
@@ -21,7 +21,7 @@ export default class RectManager {
     for (const target of controller.targets) {
       target.color = color;
     }
-    controller.draw();
+    controller.render();
     controller.dataManager.delaySave();
   }
   // ============= Delete ===============
@@ -29,7 +29,7 @@ export default class RectManager {
     if (this.controller.targets.length) {
       this.controller.rects.pop();
       this.controller.targets.pop();
-      this.controller.draw();
+      this.controller.render();
     }
   }
 }

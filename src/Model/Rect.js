@@ -46,6 +46,11 @@ export default class Rect {
     }
   }
 
+  contain(point) {
+    const {x, y} = this.pos;
+    return x < point.x && point.x < x + this.w && y < point.y && point.y < y + this.h;
+  }
+
   // check whether a point is inside a rectangle
   outerContains(point) {
     const { x, y } = this.outerRect.pos;
@@ -67,5 +72,10 @@ export default class Rect {
       dragBoxY <= this.pos.y &&
       this.pos.y + this.h <= dragBoxY + dragBoxH
     );
+  }
+
+  // change size
+  updateSize() {
+    
   }
 }

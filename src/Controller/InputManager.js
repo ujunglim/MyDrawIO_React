@@ -8,7 +8,7 @@ import DrawControllerInstance from "./DrawController";
 export default class InputManager {
   constructor(controller) {
     this.controller = controller;
-    this.isDragging = false;
+    this.isMouseDown = false;
     this.isLining = false;
     this.lineStartPort = null;
     this.bindedHandleMousedown = this.handleMousedown.bind(this);
@@ -50,41 +50,50 @@ export default class InputManager {
     }
     controller.targets = [];
 
-    this.startDragPoint = this.getMousePos(e);
-    this.isDragging = true;
+    // init
+    this.mouseStartPos = this.getMousePos(e);
+    this.isMouseDown = true;
 
+    // clicked rect or port
     for (let i = rects.length - 1; i >= 0; i--) {
       const rect = rects[i];
-      // click port of rect
+
+      // find clicked port of a rect
       for(const port of rect.ports) {
-        if(port.contains(this.startDragPoint)) {
+        // change size of rect
+
+        // draw line
+        if(port.contains(this.mouseStartPos)) {
           console.log('lining')
           this.isLining = true;
           this.lineStartPort = port;
+          break;
         }
       }
 
-      // click rect
-      if (rect.outerContains(this.startDragPoint)) {
-        this.offset = rect.pos.minus(this.startDragPoint);
+      // find clicked rect
+      if (rect.outerContains(this.mouseStartPos)) {
+        this.offset = rect.pos.minus(this.mouseStartPos);
         // set targets
         controller.targets = [rect];
         rect.isSelected = true;
+        rect.isHovered = false;
         // let target to be on top
         controller.toTop(i);
         controller.dataManager.delaySave();
         break;
       }
     }
-    // draw when there is change
+    // render when there is change
     // if (lastTargetRect !== controller.targetRect) {
-    controller.draw();
+    controller.render();
     // }
   }
 
   handleMouseUp(e) {
     const currPos = this.getMousePos(e);
-    // dragbox
+  
+    // select rects inside of dragbox
     if (this.controller.dragBox) {
       for (const rect of this.controller.rects) {
         if (rect.isInsideDragBox()) {
@@ -93,9 +102,8 @@ export default class InputManager {
         }
       }
     }
-    // console.log(this.controller.targets);
 
-    // line
+    // create line
     if (this.isLining) {
       // find end port of line
       for (let i = this.controller.rects.length - 1; i >= 0; i--) {
@@ -112,17 +120,18 @@ export default class InputManager {
     }
 
     // reset
-    this.startDragPoint = null;
-    this.endDragPoint = null;
-    this.isDragging = false;
+    this.mouseStartPos = null;
+    this.mouseEndPos = null;
+    this.isMouseDown = false;
     this.isLining = false;
     this.controller.dragBox = null;
     this.controller.drawingLine = null;
-    this.controller.draw();
+    this.controller.render();
   }
 
   handleMouseMove(e) {
     // clear previous hover
+    // TODO: optimize clear
     let hoveringShape = this.controller.hoveringShape;
     if (hoveringShape) {
       hoveringShape.isHovered = false;
@@ -131,19 +140,19 @@ export default class InputManager {
     // hover
     for (let i = this.controller.rects.length - 1; i >= 0; i--) {
       const rect = this.controller.rects[i];
-      if (rect.outerContains(this.getMousePos(e))) {
+      if (rect.outerContains(this.getMousePos(e)) && !rect.isSelected) {
         rect.isHovered = true;
         this.controller.hoveringShape = rect;
       }
     }
     // drag
-    if (this.isDragging) {
-      this.endDragPoint = this.getMousePos(e);
+    if (this.isMouseDown) {
+      this.mouseEndPos = this.getMousePos(e);
       // move targets
       if (!this.isLining && this.controller.targets.length) {
         // set position of rect (mouse position + offset)
         for (const target of this.controller.targets) {
-          target.pos = this.endDragPoint.plus(this.offset);
+          target.pos = this.mouseEndPos.plus(this.offset);
           target.setOuterRect(target.outerRect.outer_w, target.outerRect.outer_h);
           target.updatePortsPos();
           // update line position
@@ -153,13 +162,13 @@ export default class InputManager {
         }
       }
       // drag box
-      else if (this.startDragPoint && !this.isLining) {
+      else if (this.mouseStartPos && !this.isLining) {
         // drag selection size
-        const size = this.endDragPoint.minus(this.startDragPoint);
+        const size = this.mouseEndPos.minus(this.mouseStartPos);
 
         this.controller.dragBox = new Rect(
-          this.startDragPoint.x,
-          this.startDragPoint.y,
+          this.mouseStartPos.x,
+          this.mouseStartPos.y,
           size.x,
           size.y
         );
@@ -172,15 +181,15 @@ export default class InputManager {
             y: this.lineStartPort.globalPos.y
           },
           endPoint: {
-            x: this.endDragPoint.x,
-            y: this.endDragPoint.y,
+            x: this.mouseEndPos.x,
+            y: this.mouseEndPos.y,
           }
         };
         CanvasViewInstance.drawLines();
       }
     }
-     // draw
-     this.controller.draw();
+     // render
+     this.controller.render();
      this.controller.dataManager.delaySave();
   }
 

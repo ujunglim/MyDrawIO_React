@@ -29,7 +29,7 @@ class DrawController {
     this.inputManager = new InputManager(this);
     this.rectManager = new RectManager(this);
 
-    CanvasViewInstance.draw();
+    CanvasViewInstance.render();
   }
 
   registerEventListener() {
@@ -40,8 +40,8 @@ class DrawController {
     this.inputManager.removeEventListeners();
   }
 
-  draw() {
-    CanvasViewInstance.draw();
+  render() {
+    CanvasViewInstance.render();
   }
 
   getRandomVec() {

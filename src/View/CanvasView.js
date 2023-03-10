@@ -16,18 +16,18 @@ class CanvasView {
     this.context = canvas.getContext("2d");
   }
 
-  // draw canvas
-  draw() {
+  // render canvas
+  render() {
     const rects = DrawControllerInstance.rects;
 
     // clean
     this.context.fillStyle = "beige";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    // draw new
+    // render new
     for (const rect of rects) {
       this.context.fillStyle = rect.color;
       this.context.fillRect(rect.pos.x, rect.pos.y, rect.w, rect.h);
-      // draw selected stroke and ports
+      // render selected stroke and ports
       if (rect.isSelected || rect.isHovered) {
         const {
           pos: { x, y },
@@ -36,13 +36,13 @@ class CanvasView {
         } = rect;
         this.context.strokeRect(x, y, w, h);
 
-        // draw outer stroke
+        // render outer stroke
         // const {pos, outer_w, outer_h} = rect.outerRect;
         // this.context.strokeRect(pos.x, pos.y, outer_w, outer_h);
 
-        // draw ports
+        // render ports
         for (const port of rect.ports) {
-          this.context.fillStyle = 'blue';
+          this.context.fillStyle = rect.isHovered ? 'lightblue' : 'blue';
           this.context.fillRect(port.globalPos.x, port.globalPos.y, constants.PORT_SIZE, constants.PORT_SIZE)
         }
       }
