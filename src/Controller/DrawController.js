@@ -1,9 +1,10 @@
-import Rect from "../Model/Rect";
+import RectShape from "../Model/RectShape";
 import Vec2 from "../Model/Vec2";
 import CanvasViewInstance from "../View/CanvasView";
 import DataManager from "./DataManager";
+import InputEventManager from "./InputEventManager";
 import InputManager from "./InputManager";
-import RectManager from "./RectManager";
+import RectShapeManager from "./RectManager";
 
 let instance;
 
@@ -27,7 +28,8 @@ class DrawController {
 
     this.dataManager = new DataManager(this);
     this.inputManager = new InputManager(this);
-    this.rectManager = new RectManager(this);
+    this.inputEventManager = new InputEventManager();
+    this.rectManager = new RectShapeManager(this);
 
     CanvasViewInstance.render();
   }
@@ -63,7 +65,7 @@ class DrawController {
       const pos = this.getRandomVec().multiply(canvasSize.minus(size));
       const color = "hsl(" + 360 * Math.random() + ", 50%, 50%)";
 
-      this.rects.push(new Rect(pos.x, pos.y, size.x, size.y, color));
+      this.rects.push(new RectShape(pos.x, pos.y, size.x, size.y, color));
     }
   }
 

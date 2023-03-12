@@ -1,4 +1,4 @@
-import { constants } from "../Common/constants";
+import { constants, SHAPE_STATUS } from "../Common/constants";
 import DrawControllerInstance from "../Controller/DrawController";
 
 let instance;
@@ -19,32 +19,28 @@ class CanvasView {
   // render canvas
   render() {
     const rects = DrawControllerInstance.rects;
-
     // clean
     this.context.fillStyle = "beige";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     // render new
     for (const rect of rects) {
+      const shape = rect.shape;
       this.context.fillStyle = rect.color;
-      this.context.fillRect(rect.pos.x, rect.pos.y, rect.w, rect.h);
+      this.context.fillRect(shape.pos.x, shape.pos.y, shape.w, shape.h);
       // render selected stroke and ports
-      if (rect.isSelected || rect.isHovered) {
-        const {
-          pos: { x, y },
-          w,
-          h,
-        } = rect;
-        this.context.strokeRect(x, y, w, h);
-
-        // render outer stroke
-        // const {pos, outer_w, outer_h} = rect.outerRect;
-        // this.context.strokeRect(pos.x, pos.y, outer_w, outer_h);
-
-        // render ports
-        for (const port of rect.ports) {
-          this.context.fillStyle = rect.isHovered ? 'lightblue' : 'blue';
-          this.context.fillRect(port.globalPos.x, port.globalPos.y, constants.PORT_SIZE, constants.PORT_SIZE)
-        }
+      if (rect.status === SHAPE_STATUS.SELECTED) {
+        this.context.strokeRect(shape.pos.x, shape.pos.y, shape.w, shape.h);
+      }
+      // render ports
+      for (const port of rect.getActivePorts()) {
+        console.log(port);
+        this.context.fillStyle = port.color;
+        this.context.fillRect(
+          port.globalPos.x,
+          port.globalPos.y,
+          constants.PORT_SIZE,
+          constants.PORT_SIZE
+        );
       }
     }
     // this.drawTargetRect();
@@ -65,12 +61,18 @@ class CanvasView {
     }
   }
 
-  drawALine (line) {
+  drawALine(line) {
     const halfPortSize = constants.PORT_SIZE / 2;
 
     this.context.beginPath();
-    this.context.moveTo(line.startPoint.x + halfPortSize, line.startPoint.y + halfPortSize);
-    this.context.lineTo(line.endPoint.x + halfPortSize, line.endPoint.y + halfPortSize);
+    this.context.moveTo(
+      line.startPoint.x + halfPortSize,
+      line.startPoint.y + halfPortSize
+    );
+    this.context.lineTo(
+      line.endPoint.x + halfPortSize,
+      line.endPoint.y + halfPortSize
+    );
     this.context.stroke();
   }
 

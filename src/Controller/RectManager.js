@@ -1,6 +1,6 @@
-import Rect from "../Model/Rect";
+import RectShape from "../Model/Rect";
 
-export default class RectManager {
+export default class RectShapeManager {
   constructor(controller) {
     this.controller = controller;
   }
@@ -8,9 +8,10 @@ export default class RectManager {
   // ============= Create ===============
   createRect() {
     const rects = this.controller.rects;
-    rects.push(new Rect(10, 10, 100, 50, "#fff"));
+    rects.push(new RectShape(10, 10, 100, 50, "#fff"));
     this.controller.targets = rects[rects.length - 1];
     this.controller.render();
+    this.controller.dataManager.delaySave();
   }
   // ============= Edit ===============
   changeRectColor(color) {
@@ -30,6 +31,7 @@ export default class RectManager {
       this.controller.rects.pop();
       this.controller.targets.pop();
       this.controller.render();
+      this.controller.dataManager.delaySave();
     }
   }
 }

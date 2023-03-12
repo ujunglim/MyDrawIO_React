@@ -1,4 +1,9 @@
-import { constants } from "../Common/constants";
+import {
+  constants,
+  MOUSE_STATUS,
+  PORT_TYPE,
+  SHAPE_STATUS,
+} from "../Common/constants";
 import Line from "../Model/Line";
 import Rect from "../Model/Rect";
 import Vec2 from "../Model/Vec2";
@@ -8,13 +13,21 @@ import DrawControllerInstance from "./DrawController";
 export default class InputManager {
   constructor(controller) {
     this.controller = controller;
-    this.isMouseDown = false;
     this.isLining = false;
     this.lineStartPort = null;
     this.bindedHandleMousedown = this.handleMousedown.bind(this);
     this.bindedHandleMouseUp = this.handleMouseUp.bind(this);
     this.bindedHandleMouseMove = this.handleMouseMove.bind(this);
     this.bindedHandleKeyDown = this.handleKeyDown.bind(this);
+
+    // mouse move strategy
+    this.mouseStatus = MOUSE_STATUS.NONE;
+    const strategy = {};
+    strategy[MOUSE_STATUS.NONE] = this.checkHover.bind(this);
+    strategy[MOUSE_STATUS.DOWN_SHAPE] = this.moveTarget.bind(this);
+    strategy[MOUSE_STATUS.DOWN_CANVAS] = this.dragBox.bind(this);
+    strategy[MOUSE_STATUS.DOWN_PORT_LINE] = this.drawLine.bind(this);
+    this.mouseMoveStrategy = strategy;
   }
 
   addEventListeners() {
@@ -38,164 +51,170 @@ export default class InputManager {
     return new Vec2(e.clientX - constants.PANEL_WIDTH, e.clientY);
   }
 
+  // ==================== events ==========================
   handleMousedown(e) {
-    const controller = this.controller;
-    const rects = controller.rects;
-
-    // const lastTargetRect = this.controller.targetRect;
-
-    // clear previous targets
-    for (const target of controller.targets) {
+    const mousePos = this.getMousePos(e);
+    // CLEAR
+    this.mouseStatus = MOUSE_STATUS.NONE;
+    for (const target of this.controller.targets) {
       target.isSelected = false;
     }
-    controller.targets = [];
+    this.controller.targets = [];
+    // this.hoveringShape = null;
 
-    // init
-    this.mouseStartPos = this.getMousePos(e);
-    this.isMouseDown = true;
+    // clicked shape or port
+    for (let i = this.controller.rects.length - 1; i >= 0; i--) {
+      const rect = this.controller.rects[i];
 
-    // clicked rect or port
-    for (let i = rects.length - 1; i >= 0; i--) {
-      const rect = rects[i];
-
-      // find clicked port of a rect
-      for(const port of rect.ports) {
-        // change size of rect
-
-        // draw line
-        if(port.contains(this.mouseStartPos)) {
-          console.log('lining')
-          this.isLining = true;
-          this.lineStartPort = port;
-          break;
+      // shape
+      if (rect.boundingBox.contain(mousePos)) {
+        let isPortTouched = false;
+        // port
+        let ports = rect.getActivePorts();
+        for (const port of ports) {
+          if (port.contain(mousePos)) {
+            isPortTouched = true;
+            if (port.type === PORT_TYPE.RESIZE) {
+              this.mouseStatus = MOUSE_STATUS.DOWN_PORT_RESIZE;
+            } else {
+              this.mouseStatus = MOUSE_STATUS.DOWN_PORT_LINE;
+            }
+            this.controller.inputEventManager.onSelectPort(port);
+            break;
+          }
         }
-      }
-
-      // find clicked rect
-      if (rect.outerContains(this.mouseStartPos)) {
-        this.offset = rect.pos.minus(this.mouseStartPos);
-        // set targets
-        controller.targets = [rect];
-        rect.isSelected = true;
-        rect.isHovered = false;
-        // let target to be on top
-        controller.toTop(i);
-        controller.dataManager.delaySave();
+        if (!isPortTouched) {
+          this.mouseStatus = MOUSE_STATUS.DOWN_SHAPE;
+          rect.status = SHAPE_STATUS.SELECTED;
+          this.offset = rect.shape.pos.minus(mousePos);
+          this.controller.targets = [rect];
+          this.controller.toTop(i);
+        }
         break;
       }
     }
-    // render when there is change
-    // if (lastTargetRect !== controller.targetRect) {
-    controller.render();
-    // }
+    this.controller.render();
+    this.controller.dataManager.delaySave();
+  }
+
+  handleMouseMove(e) {
+    console.log(this.mouseStatus);
+    this.mouseMoveStrategy[this.mouseStatus](this.getMousePos(e));
+    // render
+    this.controller.render();
+    this.controller.dataManager.delaySave();
   }
 
   handleMouseUp(e) {
     const currPos = this.getMousePos(e);
-  
+    this.mouseStatus = MOUSE_STATUS.NONE;
+
     // select rects inside of dragbox
     if (this.controller.dragBox) {
       for (const rect of this.controller.rects) {
-        if (rect.isInsideDragBox()) {
+        if (this.controller.dragBox.containRect(rect.boundingBox)) {
           this.controller.targets.push(rect);
           rect.isSelected = true;
         }
       }
     }
 
-    // create line
-    if (this.isLining) {
-      // find end port of line
-      for (let i = this.controller.rects.length - 1; i >= 0; i--) {
-        const rect = this.controller.rects[i];
-        // find shape except itself
-        if (!this.controller.targets[0].outerContains(currPos) && rect.outerContains(currPos)) {
-          for (const port of rect.ports) {
-            if (port.contains(currPos)) {
-              DrawControllerInstance.lines.push(new Line(this.lineStartPort, port));
-            }
-          }
-        }
-      }
-    }
+    // // create line
+    // if (this.mouseStatus === MOUSE_STATUS.DOWN_PORT_LINE) {
+    //   // find end port of line
+    //   for (let i = this.controller.rects.length - 1; i >= 0; i--) {
+    //     const rect = this.controller.rects[i];
+    //     // find shape except itself
+    //     if (rect.outerContains(currPos)) {
+    //       for (const port of rect.ports) {
+    //         if (port.contain(currPos)) {
+    //           DrawControllerInstance.lines.push(
+    //             new Line(this.lineStartPort, port)
+    //           );
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 
     // reset
     this.mouseStartPos = null;
-    this.mouseEndPos = null;
-    this.isMouseDown = false;
+    // this.mouseEndPos = null;
     this.isLining = false;
     this.controller.dragBox = null;
     this.controller.drawingLine = null;
     this.controller.render();
   }
 
-  handleMouseMove(e) {
-    // clear previous hover
-    // TODO: optimize clear
-    let hoveringShape = this.controller.hoveringShape;
-    if (hoveringShape) {
-      hoveringShape.isHovered = false;
-      hoveringShape = null;
-    }
-    // hover
-    for (let i = this.controller.rects.length - 1; i >= 0; i--) {
-      const rect = this.controller.rects[i];
-      if (rect.outerContains(this.getMousePos(e)) && !rect.isSelected) {
-        rect.isHovered = true;
-        this.controller.hoveringShape = rect;
-      }
-    }
-    // drag
-    if (this.isMouseDown) {
-      this.mouseEndPos = this.getMousePos(e);
-      // move targets
-      if (!this.isLining && this.controller.targets.length) {
-        // set position of rect (mouse position + offset)
-        for (const target of this.controller.targets) {
-          target.pos = this.mouseEndPos.plus(this.offset);
-          target.setOuterRect(target.outerRect.outer_w, target.outerRect.outer_h);
-          target.updatePortsPos();
-          // update line position
-          for (const line of this.controller.lines) {
-            line.updateStartEndPoints();
-          }
-        }
-      }
-      // drag box
-      else if (this.mouseStartPos && !this.isLining) {
-        // drag selection size
-        const size = this.mouseEndPos.minus(this.mouseStartPos);
-
-        this.controller.dragBox = new Rect(
-          this.mouseStartPos.x,
-          this.mouseStartPos.y,
-          size.x,
-          size.y
-        );
-      }
-      // draw line
-      else if (this.isLining) {
-        this.controller.drawingLine = {
-          startPoint: {
-            x: this.lineStartPort.globalPos.x,
-            y: this.lineStartPort.globalPos.y
-          },
-          endPoint: {
-            x: this.mouseEndPos.x,
-            y: this.mouseEndPos.y,
-          }
-        };
-        CanvasViewInstance.drawLines();
-      }
-    }
-     // render
-     this.controller.render();
-     this.controller.dataManager.delaySave();
-  }
-
   handleKeyDown(e) {
     if (e.key === "Delete") {
       DrawControllerInstance.rectManager.deleteRect();
     }
+  }
+
+  // ===================== Mouse move strategy ========================
+  // [STRATEGY] MOUSE_STATUS.NONE
+  checkHover(mouseVec) {
+    let hoveringShape = this.controller.hoveringShape;
+    // [clear previous hovering shape] there is a hovering shape, but mouse is not inside
+    if (hoveringShape && !hoveringShape.boundingBox.contain(mouseVec)) {
+      hoveringShape.status = SHAPE_STATUS.NONE;
+      hoveringShape = null;
+    }
+
+    // [hover] when there is no hovering shape, then find one
+    if (!hoveringShape) {
+      for (let i = this.controller.rects.length - 1; i >= 0; i--) {
+        const rect = this.controller.rects[i];
+        if (
+          rect.boundingBox.contain(mouseVec) &&
+          rect.status === SHAPE_STATUS.NONE
+        ) {
+          rect.status = SHAPE_STATUS.HOVERED;
+          this.controller.hoveringShape = rect;
+          break;
+        }
+      }
+    }
+  }
+
+  // [STRATEGY] MOUSE_STATUS.DOWN_SHAPE
+  moveTarget(mouseVec) {
+    // set position of rect (mouse position + offset)
+    for (const target of this.controller.targets) {
+      target.setPos(mouseVec.plus(this.offset));
+      // update line position
+      for (const line of this.controller.lines) {
+        line.updateStartEndPoints();
+      }
+    }
+  }
+
+  // [STRATEGY] MOUSE_STATUS.DOWN_CANVAS
+  dragBox(mouseVec) {
+    // drag selection size
+    const size = mouseVec.minus(this.mouseStartPos);
+
+    this.controller.dragBox = new Rect(
+      this.mouseStartPos.x,
+      this.mouseStartPos.y,
+      size.x,
+      size.y
+    );
+  }
+
+  // [STRATEGY] MOUSE_STATUS.DOWN_PORT_LINE
+  drawLine(mouseVec) {
+    this.controller.drawingLine = {
+      startPoint: {
+        x: this.lineStartPort.globalPos.x,
+        y: this.lineStartPort.globalPos.y,
+      },
+      endPoint: {
+        x: mouseVec.x,
+        y: mouseVec.y,
+      },
+    };
+    CanvasViewInstance.drawLines();
   }
 }
