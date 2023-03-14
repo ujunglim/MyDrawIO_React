@@ -33,7 +33,6 @@ class CanvasView {
       }
       // render ports
       for (const port of rect.getActivePorts()) {
-        console.log(port);
         this.context.fillStyle = port.color;
         this.context.fillRect(
           port.globalPos.x,
@@ -64,26 +63,17 @@ class CanvasView {
   drawALine(line) {
     const halfPortSize = constants.PORT_SIZE / 2;
 
+    const start = line.startPort.globalPos;
+    const end = line.endPort.globalPos;
+
     this.context.beginPath();
-    this.context.moveTo(
-      line.startPoint.x + halfPortSize,
-      line.startPoint.y + halfPortSize
-    );
-    this.context.lineTo(
-      line.endPoint.x + halfPortSize,
-      line.endPoint.y + halfPortSize
-    );
+    this.context.moveTo(start.x + halfPortSize, start.y + halfPortSize);
+    this.context.lineTo(end.x + halfPortSize, end.y + halfPortSize);
     this.context.stroke();
   }
 
   drawLines() {
-    const drawingLine = DrawControllerInstance.drawingLine;
     const lines = DrawControllerInstance.lines;
-
-    if (drawingLine) {
-      this.drawALine(drawingLine);
-    }
-
     for (const line of lines) {
       this.drawALine(line);
     }

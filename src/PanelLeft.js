@@ -15,7 +15,7 @@ function PanelLeft() {
 
   useEffect(() => {
     const timeInterval = setInterval(() => {
-      setTitle(async (prevTitle) => {
+      setTitle((prevTitle) => {
         if (isTyping.current) {
           // typing
           const result = prevTitle ? prevTitle + completionWord[indexRef.current] : completionWord[0];
@@ -23,7 +23,7 @@ function PanelLeft() {
           // finish typing
           if (indexRef.current + 1 > completionWord.length) {
             // wait
-            await sleep(3000);
+            // sleep(3000);
             isTyping.current = false;
           }
           return result;

@@ -21,7 +21,6 @@ class DrawController {
     this.targets = [];
     this.hoveringShape = null;
     this.dragBox = null;
-    this.drawingLine = null;
     this.lines = [];
 
     this.initRects(2);

@@ -12,8 +12,8 @@ export default class RectShape {
     this.status = SHAPE_STATUS.NONE;
     this.ports = {};
     this.ports[SHAPE_STATUS.NONE] = [];
-    this.ports[SHAPE_STATUS.HOVERED] = this.createResizePorts();
-    this.ports[SHAPE_STATUS.SELECTED] = this.createLinePorts();
+    this.ports[SHAPE_STATUS.HOVERED] = this.createLinePorts();
+    this.ports[SHAPE_STATUS.SELECTED] = this.createResizePorts();
     this.createResizePorts();
     this.createLinePorts();
     this.updateBoundingBox();
@@ -76,6 +76,10 @@ export default class RectShape {
 
   contain(point) {
     return this.boundingBox.contain(point);
+  }
+
+  getTopPort() {
+    return this.getActivePorts()[0];
   }
 
   // change size
