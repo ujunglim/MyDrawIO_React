@@ -1,15 +1,12 @@
-import Canvas from "./Canvas";
-import TestClosure from "./TestClosure";
-import TestBind from "./TestBind";
-import TestVector from "./TestVector";
 import PanelRight from "./PanelRight";
 import PanelLeft from "./PanelLeft";
+import Board from "./View/Board";
 
 function App() {
   return (
     <div className="app">
       <PanelLeft />
-      <Canvas />
+      <Board />
       {/* <PanelRight /> */}
     </div>
   );

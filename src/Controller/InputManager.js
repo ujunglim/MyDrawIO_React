@@ -32,7 +32,7 @@ export default class InputManager {
   }
 
   addEventListeners() {
-    const canvas = CanvasViewInstance.canvas;
+    const canvas = this.controller.boardRef.current;
     canvas.addEventListener("mousedown", this.bindedHandleMousedown);
     canvas.addEventListener("mouseup", this.bindedHandleMouseUp);
     canvas.addEventListener("mousemove", this.bindedHandleMouseMove);
@@ -40,7 +40,7 @@ export default class InputManager {
   }
 
   removeEventListeners() {
-    const canvas = CanvasViewInstance.canvas;
+    const canvas = this.controller.boardRef.current;
     canvas.removeEventListener("mousedown", this.bindedHandleMousedown);
     canvas.removeEventListener("mouseup", this.bindedHandleMouseUp);
     canvas.removeEventListener("mousemove", this.bindedHandleMouseMove);

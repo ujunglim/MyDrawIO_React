@@ -16,12 +16,13 @@ class DrawController {
     instance = this;
   }
 
-  init() {
+  init(boardRef) {
     this.rects = [];
     this.targets = [];
     this.hoveringShape = null;
     this.dragBox = null;
     this.lines = [];
+    this.boardRef = boardRef;
 
     this.initRects(2);
 
@@ -29,8 +30,7 @@ class DrawController {
     this.inputManager = new InputManager(this);
     this.inputEventManager = new InputEventManager();
     this.rectManager = new RectShapeManager(this);
-
-    CanvasViewInstance.render();
+    // CanvasViewInstance.render();
   }
 
   registerEventListener() {
@@ -42,7 +42,7 @@ class DrawController {
   }
 
   render() {
-    CanvasViewInstance.render();
+    // CanvasViewInstance.render();
   }
 
   getRandomVec() {
@@ -50,8 +50,7 @@ class DrawController {
   }
 
   initRects(maxCount) {
-    const w = CanvasViewInstance.canvas.width;
-    const h = CanvasViewInstance.canvas.height;
+    const {width: w, height: h} = this.boardRef.size;
     const canvasSize = new Vec2(w, h);
     const maxSize = new Vec2(200, 100);
     const minSize = new Vec2(10, 5);
