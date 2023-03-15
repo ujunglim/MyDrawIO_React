@@ -1,10 +1,12 @@
 import { constants, PORT_TYPE } from "../Common/constants";
 import Rect from "./Rect";
+const { v4: uuidv4 } = require('uuid');
 
 export default class Port extends Rect {
   constructor(type, x, y, parent) {
     super(x, y, constants.PORT_SIZE, constants.PORT_SIZE);
     // this.pos from Rect represent the local position inside its parent
+    this.id = uuidv4();
     this.type = type;
     this.parent = parent;
     this.color = this.type === PORT_TYPE.LINE ? "lightblue" : "#2f9afb";

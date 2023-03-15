@@ -1,11 +1,13 @@
 import { constants, PORT_TYPE, SHAPE_STATUS } from "../Common/constants";
 import Port from "./Port";
 import Rect from "./Rect";
+import { v4 as uuidv4 } from 'uuid';
 
 const portSize = constants.PORT_SIZE;
 
 export default class RectShape {
   constructor(x, y, w, h, color) {
+    this.id = uuidv4();
     this.shape = new Rect(x, y, w, h);
     this.boundingBox = new Rect(0, 0, 0, 0);
     this.color = color;

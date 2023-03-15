@@ -12,7 +12,7 @@ import CanvasViewInstance from "../View/CanvasView";
 import DrawControllerInstance from "./DrawController";
 
 export default class InputManager {
-  constructor(controller) {
+  constructor(controller, boardRef) {
     this.controller = controller;
     this.isLining = false;
     this.drawingLine = null;
@@ -20,6 +20,7 @@ export default class InputManager {
     this.bindedHandleMouseUp = this.handleMouseUp.bind(this);
     this.bindedHandleMouseMove = this.handleMouseMove.bind(this);
     this.bindedHandleKeyDown = this.handleKeyDown.bind(this);
+    this.boardRef = boardRef;
 
     // mouse move strategy
     this.mouseStatus = MOUSE_STATUS.NONE;
@@ -108,6 +109,7 @@ export default class InputManager {
             new Port(null, mousePos.x, mousePos.y, null)
           );
           this.controller.lines.push(this.drawingLine);
+          this.boardRef.setLines([...this.controller.lines]);
         }
         this.controller.inputEventManager.onSelectPort(port);
       }
@@ -215,7 +217,7 @@ export default class InputManager {
   drawLine(mouseVec) {
     const endPort = this.drawingLine.endPort;
     endPort.globalPos = mouseVec;
-    CanvasViewInstance.drawLines();
+    // CanvasViewInstance.drawLines();
     this.checkHover(mouseVec);
   }
 }

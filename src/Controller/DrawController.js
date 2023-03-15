@@ -27,7 +27,7 @@ class DrawController {
     this.initRects(2);
 
     this.dataManager = new DataManager(this);
-    this.inputManager = new InputManager(this);
+    this.inputManager = new InputManager(this, boardRef);
     this.inputEventManager = new InputEventManager();
     this.rectManager = new RectShapeManager(this);
     // CanvasViewInstance.render();
@@ -42,7 +42,7 @@ class DrawController {
   }
 
   render() {
-    // CanvasViewInstance.render();
+    this.boardRef.setRects([...this.rects]);
   }
 
   getRandomVec() {

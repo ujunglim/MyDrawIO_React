@@ -44,7 +44,7 @@ class CanvasView {
     }
     // this.drawTargetRect();
     this.drawDragBox();
-    this.drawLines();
+    // this.drawLines();
   }
 
   // drag selection
