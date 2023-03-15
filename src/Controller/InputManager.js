@@ -81,8 +81,9 @@ export default class InputManager {
   // ==================== events ==========================
   handleMousedown(e) {
     const mousePos = this.getMousePos(e);
+    this.mouseStartPos = mousePos;
     // CLEAR
-    this.mouseStatus = MOUSE_STATUS.NONE;
+    this.mouseStatus = MOUSE_STATUS.DOWN_CANVAS;
     for (const target of this.controller.targets) {
       target.status = SHAPE_STATUS.NONE;
     }
@@ -133,7 +134,10 @@ export default class InputManager {
     if (this.controller.dragBox) {
       for (const rect of this.controller.rects) {
         if (this.controller.dragBox.containRect(rect.boundingBox)) {
+          console.log('====')
           this.controller.targets.push(rect);
+          console.log(this.controller.targets)
+          // change this.rects
           rect.isSelected = true;
         }
       }
@@ -157,6 +161,7 @@ export default class InputManager {
     this.status = MOUSE_STATUS.NONE;
     this.controller.dragBox = null;
     this.drawingLine = null;
+    this.boardRef.setDragbox(null);
     this.controller.render();
   }
 
@@ -211,6 +216,7 @@ export default class InputManager {
       size.x,
       size.y
     );
+    this.boardRef.setDragbox(this.controller.dragBox);
   }
 
   // [STRATEGY] MOUSE_STATUS.DOWN_PORT_LINE

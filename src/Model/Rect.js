@@ -21,11 +21,12 @@ export default class Rect {
   }
 
   containRect(rect) {
+    console.log(this, rect)
     return (
       this.pos.x <= rect.pos.x &&
       this.pos.y <= rect.pos.y &&
-      this.pos.x + this.w >= rect.pos.x + this.w &&
-      this.pos.y + this.h >= rect.pos.y + this.h
+      this.pos.x + this.w >= rect.pos.x + rect.w &&
+      this.pos.y + this.h >= rect.pos.y + rect.h
     );
   }
 }

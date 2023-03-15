@@ -3,18 +3,24 @@ import { useEffect, useRef } from "react";
 import { selectBoard } from "../store/slices/board";
 import { useSelector } from "react-redux";
 import DrawControllerInstance from "../Controller/DrawController";
-import { constants, SHAPE_STATUS } from '../Common/constants';
+import { constants, MOUSE_STATUS, SHAPE_STATUS } from '../Common/constants';
 
 function Board() {
   const [rects, setRects] = useState([]);
   const [lines, setLines] = useState([]);
+  const [dragbox, setDragbox] = useState();
   const boardRef = useRef(null);
   const { size } = useSelector(selectBoard);
 
+  // useEffect(() => {
+  //   console.log(dragbox)
+  // }, [dragbox])
+  
   useEffect(() => {
     boardRef.size = size;
     boardRef.setRects = setRects;
     boardRef.setLines = setLines;
+    boardRef.setDragbox = setDragbox;
 
     if (boardRef && boardRef.current) {
       DrawControllerInstance.init(boardRef);
@@ -76,6 +82,19 @@ function Board() {
           </svg>
         );
       })}
+      {dragbox && (
+        <div
+          style={{
+            border: '1px solid',
+            position: 'absolute',
+            left: dragbox.pos.x,
+            top: dragbox.pos.y,
+            width: dragbox.w,
+            height: dragbox.h,
+          }}
+        >
+        </div>
+      )}
     </div>
   )
 }

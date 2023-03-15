@@ -17,9 +17,9 @@ export const SHAPE_STATUS = {
 
 export const MOUSE_STATUS = {
   NONE: 0,
-  DOWN_CANVAS: 1,
+  DOWN_CANVAS: 1, // dragbox
   DOWN_SHAPE: 2,
   DOWN_PORT_RESIZE: 3,
   DOWN_PORT_LINE: 4,
-  DOWN_LINE: 5,
+  DOWN_LINE: 5, // click line
 };
