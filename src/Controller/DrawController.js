@@ -16,33 +16,36 @@ class DrawController {
     instance = this;
   }
 
-  init(boardRef) {
+  init(w, h) {
+    this.w = w;
+    this.h = h;
     this.rects = [];
     this.targets = [];
     this.hoveringShape = null;
     this.dragBox = null;
     this.lines = [];
-    this.boardRef = boardRef;
 
-    this.initRects(2);
+    // this.initRects(2);
 
     this.dataManager = new DataManager(this);
-    this.inputManager = new InputManager(this, boardRef);
+    this.inputManager = new InputManager(this);
     this.inputEventManager = new InputEventManager();
     this.rectManager = new RectShapeManager(this);
+
+    // this.graph = new Graph(this.rects, this.lines, this.dragBox);
     // CanvasViewInstance.render();
   }
 
-  registerEventListener() {
-    this.inputManager.addEventListeners();
+  registerEventListener(dom) {
+    this.inputManager.addEventListeners(dom);
   }
 
-  unregisterEventListener() {
-    this.inputManager.removeEventListeners();
+  unregisterEventListener(dom) {
+    this.inputManager.removeEventListeners(dom);
   }
 
   render() {
-    this.boardRef.setRects([...this.rects]);
+    // this.setGraph([...this.rects]);
   }
 
   getRandomVec() {
@@ -50,8 +53,7 @@ class DrawController {
   }
 
   initRects(maxCount) {
-    const {width: w, height: h} = this.boardRef.size;
-    const canvasSize = new Vec2(w, h);
+    const canvasSize = new Vec2(this.w, this.h);
     const maxSize = new Vec2(200, 100);
     const minSize = new Vec2(10, 5);
 
@@ -62,7 +64,6 @@ class DrawController {
 
       const pos = this.getRandomVec().multiply(canvasSize.minus(size));
       const color = "hsl(" + 360 * Math.random() + ", 50%, 50%)";
-
       this.rects.push(new RectShape(pos.x, pos.y, size.x, size.y, color));
     }
   }

@@ -4,6 +4,7 @@ import {
   PORT_TYPE,
   SHAPE_STATUS,
 } from "../Common/constants";
+import graphInstance from "../Model/Graph";
 import Line from "../Model/Line";
 import Port from "../Model/Port";
 import Rect from "../Model/Rect";
@@ -12,7 +13,7 @@ import CanvasViewInstance from "../View/CanvasView";
 import DrawControllerInstance from "./DrawController";
 
 export default class InputManager {
-  constructor(controller, boardRef) {
+  constructor(controller) {
     this.controller = controller;
     this.isLining = false;
     this.drawingLine = null;
@@ -20,7 +21,6 @@ export default class InputManager {
     this.bindedHandleMouseUp = this.handleMouseUp.bind(this);
     this.bindedHandleMouseMove = this.handleMouseMove.bind(this);
     this.bindedHandleKeyDown = this.handleKeyDown.bind(this);
-    this.boardRef = boardRef;
 
     // mouse move strategy
     this.mouseStatus = MOUSE_STATUS.NONE;
@@ -32,19 +32,17 @@ export default class InputManager {
     this.mouseMoveStrategy = strategy;
   }
 
-  addEventListeners() {
-    const canvas = this.controller.boardRef.current;
-    canvas.addEventListener("mousedown", this.bindedHandleMousedown);
-    canvas.addEventListener("mouseup", this.bindedHandleMouseUp);
-    canvas.addEventListener("mousemove", this.bindedHandleMouseMove);
+  addEventListeners(dom) {
+    dom.addEventListener("mousedown", this.bindedHandleMousedown);
+    dom.addEventListener("mouseup", this.bindedHandleMouseUp);
+    dom.addEventListener("mousemove", this.bindedHandleMouseMove);
     window.addEventListener("keydown", this.bindedHandleKeyDown);
   }
 
-  removeEventListeners() {
-    const canvas = this.controller.boardRef.current;
-    canvas.removeEventListener("mousedown", this.bindedHandleMousedown);
-    canvas.removeEventListener("mouseup", this.bindedHandleMouseUp);
-    canvas.removeEventListener("mousemove", this.bindedHandleMouseMove);
+  removeEventListeners(dom) {
+    dom.removeEventListener("mousedown", this.bindedHandleMousedown);
+    dom.removeEventListener("mouseup", this.bindedHandleMouseUp);
+    dom.removeEventListener("mousemove", this.bindedHandleMouseMove);
     window.removeEventListener("keydown", this.bindedHandleKeyDown);
   }
 
@@ -110,12 +108,14 @@ export default class InputManager {
             new Port(null, mousePos.x, mousePos.y, null)
           );
           this.controller.lines.push(this.drawingLine);
-          this.boardRef.setLines([...this.controller.lines]);
+          graphInstance.lines = this.controller.lines;
+          // this.boardRef.setLines([...this.controller.lines]);
         }
-        this.controller.inputEventManager.onSelectPort(port);
+        // this.controller.inputEventManager.onSelectPort(port);
       }
     );
     this.controller.render();
+    graphInstance.rects = this.controller.rects;
     this.controller.dataManager.delaySave();
   }
 
@@ -123,6 +123,7 @@ export default class InputManager {
     this.mouseMoveStrategy[this.mouseStatus](this.getMousePos(e));
     // render
     this.controller.render();
+    graphInstance.rects = this.controller.rects;
     this.controller.dataManager.delaySave();
   }
 
@@ -161,8 +162,9 @@ export default class InputManager {
     this.status = MOUSE_STATUS.NONE;
     this.controller.dragBox = null;
     this.drawingLine = null;
-    this.boardRef.setDragbox(null);
+    // this.boardRef.setDragbox(null);
     this.controller.render();
+    graphInstance.rects = this.controller.rects;
   }
 
   handleKeyDown(e) {
@@ -195,6 +197,7 @@ export default class InputManager {
         }
       }
     }
+    graphInstance.rects = this.controller.rects;
   }
 
   // [STRATEGY] MOUSE_STATUS.DOWN_SHAPE
@@ -216,7 +219,7 @@ export default class InputManager {
       size.x,
       size.y
     );
-    this.boardRef.setDragbox(this.controller.dragBox);
+    // this.boardRef.setDragbox(this.controller.dragBox);
   }
 
   // [STRATEGY] MOUSE_STATUS.DOWN_PORT_LINE
