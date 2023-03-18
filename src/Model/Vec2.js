@@ -1,5 +1,12 @@
+import { makeAutoObservable } from "mobx";
+
 export default class Vec2 {
+  x = 0;
+  y = 0;
+
   constructor(x, y) {
+    makeAutoObservable(this);
+
     this.x = x;
     this.y = y;
   }

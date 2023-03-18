@@ -5,6 +5,12 @@ import Test from "./Test";
 import Timer from "./Model/Timer";
 import { useEffect } from "react";
 import graphInstance from "./Model/Graph";
+import { configure } from "mobx";
+
+// close mobx strict-mode
+configure({
+  enforceActions: "never",
+});
 
 function App() {
   const myTimer = new Timer();
@@ -17,7 +23,7 @@ function App() {
   return (
     <div className="app">
       <PanelLeft />
-      <Board graph={graphInstance} />
+      <Board />
       {/* <Test timer={myTimer} /> */}
       {/* <PanelRight /> */}
     </div>

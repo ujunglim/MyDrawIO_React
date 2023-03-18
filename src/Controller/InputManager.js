@@ -4,12 +4,10 @@ import {
   PORT_TYPE,
   SHAPE_STATUS,
 } from "../Common/constants";
-import graphInstance from "../Model/Graph";
 import Line from "../Model/Line";
 import Port from "../Model/Port";
 import Rect from "../Model/Rect";
 import Vec2 from "../Model/Vec2";
-import CanvasViewInstance from "../View/CanvasView";
 import DrawControllerInstance from "./DrawController";
 
 export default class InputManager {
@@ -53,8 +51,8 @@ export default class InputManager {
 
   // check collision to port or rect shape
   checkRectShapePortCollision(point, onInsideRectShape, onInsidePort) {
-    for (let i = this.controller.rects.length - 1; i >= 0; i--) {
-      const rect = this.controller.rects[i];
+    for (let i = this.controller.graph.rects.length - 1; i >= 0; i--) {
+      const rect = this.controller.graph.rects[i];
 
       // shape
       if (rect.boundingBox.contain(point)) {
@@ -107,15 +105,13 @@ export default class InputManager {
             port,
             new Port(null, mousePos.x, mousePos.y, null)
           );
-          this.controller.lines.push(this.drawingLine);
-          graphInstance.lines = this.controller.lines;
+          this.controller.graph.lines.push(this.drawingLine);
           // this.boardRef.setLines([...this.controller.lines]);
         }
         // this.controller.inputEventManager.onSelectPort(port);
       }
     );
     this.controller.render();
-    graphInstance.rects = this.controller.rects;
     this.controller.dataManager.delaySave();
   }
 
@@ -123,7 +119,6 @@ export default class InputManager {
     this.mouseMoveStrategy[this.mouseStatus](this.getMousePos(e));
     // render
     this.controller.render();
-    graphInstance.rects = this.controller.rects;
     this.controller.dataManager.delaySave();
   }
 
@@ -133,11 +128,11 @@ export default class InputManager {
 
     // select rects inside of dragbox
     if (this.controller.dragBox) {
-      for (const rect of this.controller.rects) {
+      for (const rect of this.controller.graph.rects) {
         if (this.controller.dragBox.containRect(rect.boundingBox)) {
-          console.log('====')
+          console.log("====");
           this.controller.targets.push(rect);
-          console.log(this.controller.targets)
+          console.log(this.controller.targets);
           // change this.rects
           rect.isSelected = true;
         }
@@ -164,7 +159,6 @@ export default class InputManager {
     this.drawingLine = null;
     // this.boardRef.setDragbox(null);
     this.controller.render();
-    graphInstance.rects = this.controller.rects;
   }
 
   handleKeyDown(e) {
@@ -185,8 +179,8 @@ export default class InputManager {
 
     // [hover] when there is no hovering shape, then find one
     if (!hoveringShape) {
-      for (let i = this.controller.rects.length - 1; i >= 0; i--) {
-        const rect = this.controller.rects[i];
+      for (let i = this.controller.graph.rects.length - 1; i >= 0; i--) {
+        const rect = this.controller.graph.rects[i];
         if (
           rect.boundingBox.contain(mouseVec) &&
           rect.status === SHAPE_STATUS.NONE
@@ -197,7 +191,6 @@ export default class InputManager {
         }
       }
     }
-    graphInstance.rects = this.controller.rects;
   }
 
   // [STRATEGY] MOUSE_STATUS.DOWN_SHAPE

@@ -9,46 +9,6 @@ function PanelLeft() {
   const indexRef = useRef(0);
   const isTyping = useRef(true);
 
-  const sleep = (ms) => {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  useEffect(() => {
-    const timeInterval = setInterval(() => {
-      setTitle((prevTitle) => {
-        if (isTyping.current) {
-          // typing
-          const result = prevTitle ? prevTitle + completionWord[indexRef.current] : completionWord[0];
-          indexRef.current++;
-          // finish typing
-          if (indexRef.current + 1 > completionWord.length) {
-            // wait
-            // sleep(3000);
-            isTyping.current = false;
-          }
-          return result;
-        }
-        else {
-          // delete
-          const prevTitleArr = prevTitle.split('');
-
-          // finish deleting
-          if (prevTitleArr.length === 0) {
-            // wait
-            isTyping.current = true;
-            indexRef.current = 0;
-          }
-          // remove
-          prevTitleArr.pop();
-          return prevTitleArr.join('');
-        }
-
-      })
-    }, 300);
-
-    return () => clearInterval(timeInterval);
-  }, []);
-
   const handleCreateRect = () => {
     DrawControllerInstance.rectManager.createRect();
   };

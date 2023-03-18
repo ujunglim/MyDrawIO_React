@@ -1,12 +1,26 @@
 import { constants, PORT_TYPE, SHAPE_STATUS } from "../Common/constants";
 import Port from "./Port";
 import Rect from "./Rect";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import { makeObservable, observable } from "mobx";
 
 const portSize = constants.PORT_SIZE;
 
 export default class RectShape {
+  id = null;
+  shape = null;
+  boundingBox = null;
+  color = null;
+  status = null;
+  ports = null;
+
   constructor(x, y, w, h, color) {
+    makeObservable(this, {
+      boundingBox: observable,
+      color: observable,
+      status: observable,
+    });
+
     this.id = uuidv4();
     this.shape = new Rect(x, y, w, h);
     this.boundingBox = new Rect(0, 0, 0, 0);
@@ -16,8 +30,6 @@ export default class RectShape {
     this.ports[SHAPE_STATUS.NONE] = [];
     this.ports[SHAPE_STATUS.HOVERED] = this.createLinePorts();
     this.ports[SHAPE_STATUS.SELECTED] = this.createResizePorts();
-    this.createResizePorts();
-    this.createLinePorts();
     this.updateBoundingBox();
   }
 

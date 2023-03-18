@@ -7,7 +7,7 @@ export default class RectShapeManager {
 
   // ============= Create ===============
   createRect() {
-    const rects = this.controller.rects;
+    const rects = this.controller.graph.rects;
     rects.push(new RectShape(10, 10, 100, 50, "#fff"));
     this.controller.targets = rects[rects.length - 1];
     this.controller.render();
@@ -28,7 +28,7 @@ export default class RectShapeManager {
   // ============= Delete ===============
   deleteRect() {
     if (this.controller.targets.length) {
-      this.controller.rects.pop();
+      this.controller.graph.rects.pop();
       this.controller.targets.pop();
       this.controller.render();
       this.controller.dataManager.delaySave();

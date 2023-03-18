@@ -1,6 +1,17 @@
+import { makeObservable, observable } from "mobx";
 import Vec2 from "./Vec2";
 export default class Rect {
+  pos = null;
+  w = 0;
+  h = 0;
+
   constructor(x, y, w, h) {
+    makeObservable(this, {
+      pos: observable,
+      w: observable,
+      h: observable,
+    });
+
     this.pos = new Vec2(x, y);
     this.w = w;
     this.h = h;
@@ -21,7 +32,6 @@ export default class Rect {
   }
 
   containRect(rect) {
-    console.log(this, rect)
     return (
       this.pos.x <= rect.pos.x &&
       this.pos.y <= rect.pos.y &&

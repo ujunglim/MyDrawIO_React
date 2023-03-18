@@ -2,19 +2,17 @@ import React, { useState } from "react";
 import { useEffect, useRef } from "react";
 import DrawControllerInstance from "../Controller/DrawController";
 import { constants, MOUSE_STATUS, SHAPE_STATUS } from "../Common/constants";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 
-const Board = observer(({ graph }) => {
+const Board = observer(() => {
   const width = window.innerWidth - constants.PANEL_WIDTH * 2;
   const height = window.innerHeight;
   const boardRef = useRef(null);
+  const graph = DrawControllerInstance.graph;
 
   useEffect(() => {
     if (boardRef && boardRef.current) {
       DrawControllerInstance.init(width, height);
-      graph.initRects(2);
-      graph.init(DrawControllerInstance.rects, DrawControllerInstance.lines)
-      console.log(graph)
 
       const dom = boardRef.current;
       DrawControllerInstance.registerEventListener(dom);
@@ -118,8 +116,7 @@ const Board = observer(({ graph }) => {
         ></div>
       )}
     </div>
-
   );
-})
+});
 
 export default Board;

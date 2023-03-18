@@ -1,6 +1,7 @@
+import { makeObservable, observable } from "mobx";
+import Graph from "../Model/Graph";
 import RectShape from "../Model/RectShape";
 import Vec2 from "../Model/Vec2";
-import CanvasViewInstance from "../View/CanvasView";
 import DataManager from "./DataManager";
 import InputEventManager from "./InputEventManager";
 import InputManager from "./InputManager";
@@ -9,23 +10,30 @@ import RectShapeManager from "./RectManager";
 let instance;
 
 class DrawController {
+  w = 0;
+  h = 0;
+  graph = new Graph();
+  targets = [];
+  hoveringShape = null;
+  dragBox = null;
+
   constructor() {
     if (instance) {
       throw new Error("New instance cannot be created!!");
     }
     instance = this;
+    makeObservable(this, {
+      targets: observable,
+      hoveringShape: observable,
+      dragBox: observable,
+    });
   }
 
   init(w, h) {
     this.w = w;
     this.h = h;
-    this.rects = [];
-    this.targets = [];
-    this.hoveringShape = null;
-    this.dragBox = null;
-    this.lines = [];
 
-    // this.initRects(2);
+    this.initRects(2);
 
     this.dataManager = new DataManager(this);
     this.inputManager = new InputManager(this);
@@ -64,14 +72,14 @@ class DrawController {
 
       const pos = this.getRandomVec().multiply(canvasSize.minus(size));
       const color = "hsl(" + 360 * Math.random() + ", 50%, 50%)";
-      this.rects.push(new RectShape(pos.x, pos.y, size.x, size.y, color));
+      this.graph.rects.push(new RectShape(pos.x, pos.y, size.x, size.y, color));
     }
   }
 
   toTop(i) {
-    const target = this.rects[i];
-    this.rects.splice(i, 1);
-    this.rects.push(target);
+    const target = this.graph.rects[i];
+    this.graph.rects.splice(i, 1);
+    this.graph.rects.push(target);
   }
 }
 
