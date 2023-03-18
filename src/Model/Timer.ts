@@ -1,8 +1,8 @@
 import { action, makeAutoObservable, makeObservable, observable } from "mobx";
 
 class Timer {
+  count: number = 0;
   constructor() {
-    this.count = 0;
     makeAutoObservable(this);
   }
 

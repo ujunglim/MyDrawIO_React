@@ -1,8 +1,10 @@
 import { makeAutoObservable } from "mobx";
+import RectShape from './RectShape';
+import Line from './Line';
 
 class Graph {
-  rects = [];
-  lines = [];
+  rects: RectShape[] = [];
+  lines: Line[] = [];
 
   constructor() {
     makeAutoObservable(this);

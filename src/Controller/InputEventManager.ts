@@ -1,12 +1,12 @@
 import { SHAPE_STATUS } from "../Common/constants";
-import DrawControllerInstance from "./DrawController";
+import Port from '../Model/Ports';
 
 export default class InputEventManager {
   // clear
   onStartSelect() {}
 
   onSelectShape() {}
-  onSelectPort(port) {}
+  onSelectPort(port: Port) {}
   onSelectLine() {}
   onSelectNothing() {}
   onSelectAll() {}

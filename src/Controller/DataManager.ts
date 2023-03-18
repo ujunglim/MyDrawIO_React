@@ -1,8 +1,12 @@
 import { constants } from "../Common/constants";
+import DrawController from './DrawController';
 
 // load and save data
 export default class DataManager {
-  constructor(controller) {
+  private controller: DrawController;
+  private timeToSave: number;
+
+  constructor(controller: DrawController) {
     this.controller = controller;
     this.timeToSave = -1;
 
@@ -15,7 +19,7 @@ export default class DataManager {
     }, 1000);
   }
 
-  delaySave() {
+  public delaySave(): void {
     this.timeToSave = Date.now() + constants.DELAY_SAVE_TIME;
   }
 }

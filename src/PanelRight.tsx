@@ -2,10 +2,11 @@
 /* eslint-disable react/style-prop-object */
 import { Button, ColorPicker } from "@ui5/webcomponents-react";
 import React from "react";
-import DrawControllerInstance from "./Controller/DrawController";
+import DrawController from './Controller/DrawController';
 
 function PanelRight() {
-  const handleColorChange = (e) => {
+  const DrawControllerInstance = DrawController.instance;
+  const handleColorChange = (e: any) => {
     if (DrawControllerInstance.targets.length) {
       DrawControllerInstance.rectManager.changeRectColor(e.target.color);
     }

@@ -1,7 +1,9 @@
-import RectShape from "../Model/Rect";
+import RectShape from "../Model/RectShape";
+import DrawController from './DrawController';
 
 export default class RectShapeManager {
-  constructor(controller) {
+  private controller: DrawController;
+  constructor(controller: DrawController) {
     this.controller = controller;
   }
 
@@ -9,12 +11,13 @@ export default class RectShapeManager {
   createRect() {
     const rects = this.controller.graph.rects;
     rects.push(new RectShape(10, 10, 100, 50, "#fff"));
-    this.controller.targets = rects[rects.length - 1];
+    this.controller.targets = [rects[rects.length - 1]];
     this.controller.render();
     this.controller.dataManager.delaySave();
   }
+  
   // ============= Edit ===============
-  changeRectColor(color) {
+  changeRectColor(color: string) {
     const controller = this.controller;
     if (!controller.targets.length) {
       return;
@@ -25,6 +28,7 @@ export default class RectShapeManager {
     controller.render();
     controller.dataManager.delaySave();
   }
+  
   // ============= Delete ===============
   deleteRect() {
     if (this.controller.targets.length) {
