@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { ThemeProvider } from "@ui5/webcomponents-react";
 import "./index.css";
-import App from './App';
+import App from "./App";
 
 const rootElement = document.getElementById("root");
 
@@ -12,9 +11,7 @@ if (!rootElement) {
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
-  <ThemeProvider>
-    {/* <React.StrictMode> */}
+  <React.StrictMode>
     <App />
-    {/* </React.StrictMode> */}
-  </ThemeProvider>
+  </React.StrictMode>
 );

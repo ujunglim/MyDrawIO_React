@@ -8,6 +8,7 @@ import RectShapeComp from "./RectShapeComp";
 import { v4 as uuidv4 } from "uuid";
 import LineComp from "./LineComp";
 import DragboxComp from "./DragboxComp";
+import "./index.css";
 
 const Board = observer(() => {
   const width: number = window.innerWidth - constants.PANEL_WIDTH * 2;
@@ -32,10 +33,8 @@ const Board = observer(() => {
       style={{
         width: width,
         height: height,
-        background: "beige",
-        position: "relative",
-        overflow: "hidden",
       }}
+      className="border"
     >
       {DrawController.instance.graph.rects.map((rect: RectShape) => (
         <RectShapeComp rect={rect} key={uuidv4()} />

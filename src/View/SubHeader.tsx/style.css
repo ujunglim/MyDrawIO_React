@@ -1,0 +1,19 @@
+.subHeader {
+  background-color: #f6f6f6;
+  color: rgb(186, 186, 186);
+  padding-left: 1rem;
+  width: 100%;
+  border-top: 1px solid lightgrey;
+  border-bottom: 1px solid lightgrey;
+  height: 33px;
+}
+
+span {
+  margin-right: .5rem;
+  cursor: pointer;
+  padding: .5rem;
+}
+
+span:hover {
+  color: grey;
+}

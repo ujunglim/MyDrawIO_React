@@ -1,0 +1,12 @@
+.rectShape .ant-card-head {
+  min-height: fit-content;
+}
+
+.ant-card {
+  text-align: center;
+}
+
+.rectShape .ant-card .ant-card-body {
+  padding: 0 10px;
+  /* min-height: 100px; */
+}

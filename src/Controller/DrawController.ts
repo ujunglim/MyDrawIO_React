@@ -69,7 +69,7 @@ export default class DrawController {
   initRects(maxCount: number) {
     const canvasSize = new Vec2(this.w, this.h);
     const maxSize = new Vec2(200, 100);
-    const minSize = new Vec2(30, 30);
+    const minSize = new Vec2(100, 70);
 
     for (let i = 0; i < maxCount; i++) {
       const size = this.getRandomVec()

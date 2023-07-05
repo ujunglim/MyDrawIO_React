@@ -16,10 +16,16 @@ body {
 
 .app {
   display: flex;
+  flex-flow: column;
+}
+
+section {
+  display: flex;
 }
 
 .panel {
   width: 250px;
+  background-color: #f6f6f6;
 }
 
 .title::after {
@@ -37,12 +43,60 @@ body {
   }
 }
 
-.searchIcon {
-  position: relative;
-  left: -18px;
-  top: 1px;
-  background: url("data:image/gif;base64,R0lGODlhMAAwAIAAAP///wAAACH5BAEAAAAALAAAAAAwADAAAAIxhI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8egpAAA7")
+
+/* PANEL */
+.part {
+  padding: 1rem;
 }
 
+.ant-collapse, .ant-collapse-content, .ant-collapse>.ant-collapse-item:last-child {
+  border-radius: 0 !important;
+  border-right: 0px;
+  border-left: 0px;
+}
 
+.ant-collapse-header {
+  border-radius: 0 !important;
+  display: flex;
+  align-items: center !important;
+  padding: 0 !important;
+}
 
+.ant-btn {
+  display: flex;
+  align-items: center;
+}
+
+/* LEFT PANEL */
+.ant-tabs >.ant-tabs-nav .ant-tabs-nav-list {
+  display: flex;
+  width: 100%;
+}
+
+.ant-tabs .ant-tabs-tab {
+  flex: 1;
+  justify-content: center;
+  background-color: #f6f6f6;  /*  rgb(228, 228, 228) */
+}
+
+.ant-tabs .ant-tabs-tab+.ant-tabs-tab {
+  margin: 0;
+}
+
+.ant-tabs-content-holder {
+  padding: 0 1rem;
+}
+
+/* BORDER */
+.border {
+  background-color: white;
+  position: relative;
+  overflow: hidden;
+  border-left: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+}
+
+/* RECT SHAPE */
+.rectShape {
+  cursor: pointer;
+}

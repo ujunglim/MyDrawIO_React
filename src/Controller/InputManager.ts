@@ -57,7 +57,7 @@ export default class InputManager {
 
   // create vector of mouse x, y
   private getMousePos(e: MouseEvent) {
-    return new Vec2(e.clientX - constants.PANEL_WIDTH, e.clientY);
+    return new Vec2(e.clientX - constants.PANEL_WIDTH, e.clientY - constants.HEADER_HEIGHT);
   }
 
   // check collision to port or rect shape

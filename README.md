@@ -10,6 +10,7 @@ How has it changed?
 </br>
 
 ![img](./rfc.png)
+
 # Move properties of class to RFC (Board.js)
 
 When state changes, RFC will `rerender`, so change `class properties` to `state`.
@@ -91,3 +92,7 @@ class DrawController {
   });
 }
 ```
+
+# TODO
+
+less
