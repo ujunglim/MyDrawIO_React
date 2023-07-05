@@ -8,5 +8,6 @@
 
 .rectShape .ant-card .ant-card-body {
   padding: 0 10px;
+  justify-content: center;
   /* min-height: 100px; */
 }

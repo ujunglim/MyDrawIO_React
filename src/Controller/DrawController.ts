@@ -77,7 +77,7 @@ export default class DrawController {
         .plus(minSize);
 
       const pos = this.getRandomVec().multiply(canvasSize.minus(size));
-      const color = "hsl(" + 360 * Math.random() + ", 50%, 50%)";
+      const color = "hsl(" + 360 * Math.random() + ", 90%, 90%)"; // (Hue, Saturation, Lightness)
       this.graph.rects.push(new RectShape(pos.x, pos.y, size.x, size.y, color));
     }
   }

@@ -5,7 +5,7 @@ import Port from "../Model/Ports";
 import RectShape from "../Model/RectShape";
 import { v4 as uuidv4 } from "uuid";
 import { observer } from "mobx-react-lite";
-import { Card } from "antd";
+import { Card, Input } from "antd";
 import "./index.css";
 
 const RectShapeComp: React.FC<{ rect: RectShape }> = observer(({ rect }) => {
@@ -24,7 +24,13 @@ const RectShapeComp: React.FC<{ rect: RectShape }> = observer(({ rect }) => {
     <div key={id} className="rectShape">
       <Card
         className="card"
-        title="title"
+        title={
+          <Input
+            placeholder="Title"
+            bordered={false}
+            onChange={(e) => console.log(e)}
+          />
+        }
         style={{
           position: "absolute",
           left: x,
@@ -32,7 +38,10 @@ const RectShapeComp: React.FC<{ rect: RectShape }> = observer(({ rect }) => {
           width: w,
           height: h,
           background: color,
-          border: `${status === SHAPE_STATUS.SELECTED ? 1.5 : 0}px solid`,
+          border: "none",
+          outline: `${
+            status === SHAPE_STATUS.SELECTED ? 2 : 0
+          }px solid #1677ff`,
         }}
       >
         <p>asdasdasd</p>

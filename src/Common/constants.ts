@@ -2,7 +2,9 @@ export const constants = {
   DELAY_SAVE_TIME: 3000,
   PANEL_WIDTH: 250,
   HEADER_HEIGHT: 104,
-  PORT_SIZE: 10,
+  PORT_SIZE: 7,
+  GRID_SPACING: 20,
+  GRID_PADDING: 0,
 };
 
 export enum PORT_TYPE {

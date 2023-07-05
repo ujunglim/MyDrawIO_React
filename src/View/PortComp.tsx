@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 const PortComp: React.FC<{ port: Port }> = observer(({ port }) => {
   const { id, w, h, color, globalPos } = port;
   return (
-    <button
+    <div
       key={id}
       style={{
         width: w,
@@ -14,10 +14,10 @@ const PortComp: React.FC<{ port: Port }> = observer(({ port }) => {
         position: "absolute",
         left: globalPos?.x,
         top: globalPos?.y,
-        border: "none",
+        outline: "2px solid #1677ff",
         borderRadius: "10px",
       }}
-    ></button>
+    ></div>
   );
 });
 

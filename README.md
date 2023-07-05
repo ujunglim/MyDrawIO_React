@@ -1,6 +1,6 @@
 # MyDrawIO Rect ver
 
-## React, TS, svg, SAPUI
+## React, TS, svg
 
 The first change of React version is changing `view` part to `React Function Component(RFC)`.
 In canvas js version, we used `CanvasView.js` class as view part.
@@ -92,6 +92,11 @@ class DrawController {
   });
 }
 ```
+
+# canvas
+
+moveTo(x, y): move current point to x, y without drawing a line.
+lineTo(x, y): draw straight line from current position to x, y
 
 # TODO
 

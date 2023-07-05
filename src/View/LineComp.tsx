@@ -24,7 +24,7 @@ const LineComp: React.FC<{ line: Line }> = observer(({ line }) => {
         y1={y1 + gap}
         x2={x2 + gap}
         y2={y2 + gap}
-        stroke="black"
+        stroke="#1677ff"
       />
     </svg>
   );

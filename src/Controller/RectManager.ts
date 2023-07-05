@@ -10,7 +10,7 @@ export default class RectShapeManager {
   // ============= Create ===============
   createRect() {
     const rects = this.controller.graph.rects;
-    rects.push(new RectShape(10, 10, 100, 50, "#fff"));
+    rects.push(new RectShape(10, 10, 100, 70, "beige"));
     this.controller.targets = [rects[rects.length - 1]];
     this.controller.render();
     this.controller.dataManager.delaySave();

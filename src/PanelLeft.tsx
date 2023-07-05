@@ -17,7 +17,6 @@ function PanelLeft() {
 
   return (
     <div className="panel">
-      {/* <h1 className="title">{title}</h1> */}
       <div className="part">
         <Input type="Text" placeholder="Search Shapes" />
       </div>
