@@ -98,6 +98,10 @@ class DrawController {
 moveTo(x, y): move current point to x, y without drawing a line.
 lineTo(x, y): draw straight line from current position to x, y
 
+# Edit title, content
+
+InputManager.isEditMode
+
 # TODO
 
 less

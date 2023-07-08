@@ -24,6 +24,8 @@ export default class InputManager {
   private mouseStartPos: Vec2 | null = null;
   private hoveringShape: RectShape | null = null;
   private offset: Vec2 | null = null;
+  private isEditMode: boolean = false;
+  private lastMouseDownTimestamp: number;
 
   constructor(controller: DrawController) {
     this.controller = controller;
@@ -91,6 +93,16 @@ export default class InputManager {
 
   // ==================== events ==========================
   private handleMousedown(e: MouseEvent) {
+    this.isEditMode = false;
+    const currMouseDownTimestamp = new Date().getTime();
+    if (this.lastMouseDownTimestamp) {
+      // double clicked
+      if (currMouseDownTimestamp - this.lastMouseDownTimestamp < 200) {
+        this.isEditMode = true;
+      }
+    }
+    this.lastMouseDownTimestamp = currMouseDownTimestamp;
+
     const mousePos = this.getMousePos(e);
     this.mouseStartPos = mousePos;
     // CLEAR
@@ -101,39 +113,43 @@ export default class InputManager {
     this.controller.targets = [];
     this.hoveringShape = null;
 
-    this.checkRectShapePortCollision(
-      mousePos,
-      (rect, i) => {
-        this.controller.hoveringShape = null;
-        this.mouseStatus = MOUSE_STATUS.DOWN_SHAPE;
-        rect.status = SHAPE_STATUS.SELECTED;
-        this.offset = rect.shape && rect.shape.pos.minus(mousePos);
-        this.controller.targets = [rect];
-        this.controller.toTop(i);
-      },
-      (port) => {
-        if (port.type === PORT_TYPE.RESIZE) {
-          this.mouseStatus = MOUSE_STATUS.DOWN_PORT_RESIZE;
-        } else {
-          this.mouseStatus = MOUSE_STATUS.DOWN_PORT_LINE;
-          this.drawingLine = new Line(
-            port,
-            new Port(null, mousePos.x, mousePos.y, null)
-          );
-          this.controller.graph.lines.push(this.drawingLine);
-          // this.boardRef.setLines([...this.controller.lines]);
+    if (!this.isEditMode) {
+      this.checkRectShapePortCollision(
+        mousePos,
+        (rect, i) => {
+          this.controller.hoveringShape = null;
+          this.mouseStatus = MOUSE_STATUS.DOWN_SHAPE;
+          rect.status = SHAPE_STATUS.SELECTED;
+          this.offset = rect.shape && rect.shape.pos.minus(mousePos);
+          this.controller.targets = [rect];
+          this.controller.toTop(i);
+        },
+        (port) => {
+          if (port.type === PORT_TYPE.RESIZE) {
+            this.mouseStatus = MOUSE_STATUS.DOWN_PORT_RESIZE;
+          } else {
+            this.mouseStatus = MOUSE_STATUS.DOWN_PORT_LINE;
+            this.drawingLine = new Line(
+              port,
+              new Port(null, mousePos.x, mousePos.y, null)
+            );
+            this.controller.graph.lines.push(this.drawingLine);
+            // this.boardRef.setLines([...this.controller.lines]);
+          }
+          // this.controller.inputEventManager.onSelectPort(port);
         }
-        // this.controller.inputEventManager.onSelectPort(port);
-      }
-    );
-    this.controller.render();
+      );
+    }
     this.controller.dataManager.delaySave();
   }
 
   handleMouseMove(e: MouseEvent) {
+    if (this.isEditMode) {
+      return;
+    }
     this.mouseMoveStrategy[this.mouseStatus](this.getMousePos(e));
     // render
-    this.controller.render();
+    // this.controller.render();
     this.controller.dataManager.delaySave();
   }
 
@@ -172,7 +188,7 @@ export default class InputManager {
     this.controller.dragBox = null;
     this.drawingLine = null;
     // this.boardRef.setDragbox(null);
-    this.controller.render();
+    // this.controller.render();
   }
 
   handleKeyDown(e: any) {

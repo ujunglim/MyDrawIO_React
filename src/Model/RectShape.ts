@@ -14,6 +14,8 @@ export default class RectShape {
   color: string;
   status: SHAPE_STATUS | null = null;
   ports: { [key in SHAPE_STATUS]?: Port[] } = {};
+  title: string;
+  content: string;
 
   constructor(x: number, y: number, w: number, h: number, color: string) {
     makeObservable(this, {
@@ -95,4 +97,12 @@ export default class RectShape {
   }
   // change size
   updateSize() {}
+
+  setTitle(text: string) {
+    this.title = text;
+  }
+
+  setContent(text: string) {
+    this.content = text;
+  }
 }

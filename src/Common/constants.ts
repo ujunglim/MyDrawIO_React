@@ -1,7 +1,7 @@
 export const constants = {
   DELAY_SAVE_TIME: 3000,
   PANEL_WIDTH: 250,
-  HEADER_HEIGHT: 104,
+  HEADER_HEIGHT: 105, // header + subheader
   PORT_SIZE: 7,
   GRID_SPACING: 20,
   GRID_PADDING: 0,

@@ -12,7 +12,7 @@ import "./index.css";
 
 const Board = observer(() => {
   const width: number = window.innerWidth - constants.PANEL_WIDTH * 2;
-  const height: number = window.innerHeight;
+  const height: number = window.innerHeight - constants.HEADER_HEIGHT;
   const boardRef: any = useRef(null);
   const canvasRef: any = useRef(null);
 
@@ -82,11 +82,15 @@ const Board = observer(() => {
         }}
         className="board"
       >
-        {DrawController.instance.graph.rects.map((rect: RectShape) => (
-          <RectShapeComp rect={rect} key={uuidv4()} />
-        ))}
         {DrawController.instance.graph.lines.map((line) => (
           <LineComp line={line} key={uuidv4()} />
+        ))}
+        {DrawController.instance.graph.rects.map((rect: RectShape) => (
+          <RectShapeComp
+            rect={rect}
+            key={uuidv4()}
+            controller={DrawController}
+          />
         ))}
         {DrawController.instance.dragBox && (
           <DragboxComp dragbox={DrawController.instance.dragBox} />
