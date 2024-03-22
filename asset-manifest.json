@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/MyDrawIO_React/static/css/main.144d25d6.css",
+    "main.js": "/MyDrawIO_React/static/js/main.ed73b26f.js",
+    "index.html": "/MyDrawIO_React/index.html",
+    "main.144d25d6.css.map": "/MyDrawIO_React/static/css/main.144d25d6.css.map",
+    "main.ed73b26f.js.map": "/MyDrawIO_React/static/js/main.ed73b26f.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.144d25d6.css",
+    "static/js/main.ed73b26f.js"
+  ]
+}
